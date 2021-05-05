@@ -1,0 +1,52 @@
+html[data-theme=dark] {
+  background: #2C2F37;
+}
+
+.graphs {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.graphs>* {
+  flex-grow: 1;
+  flex-basis: 200px;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+body .graphs {
+  flex-basis: 800px;
+  overflow-y: scroll;
+  padding: 30px;
+  background: rgba(0, 0, 0, .1);
+}
+
+body .controls {
+  flex-grow: 1;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, .1);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .2);
+  border-radius: 999px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-5);
+}

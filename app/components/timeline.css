@@ -1,0 +1,11 @@
+motor-timeline canvas {
+  background: rgba(255, 255, 255, .05);
+  height: 300px;
+  width: 100%;
+}
+
+motor-timeline h1 {
+  font-size: 1.25em;
+  margin: 0 0 15px 0;
+  color: white;
+}
