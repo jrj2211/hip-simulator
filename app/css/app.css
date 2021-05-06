@@ -26,6 +26,36 @@ body .controls {
   gap: 30px;
 }
 
+body .expand {
+  flex-grow: 1;
+}
+
+body .connection-status {
+  padding: 15px 0;
+  font-size: 1.2em;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+body .connection-status .icon {
+  background: var(--blue-5);
+  border-radius: 100%;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body .connection-status .icon[color=green] {
+  background: var(--green-5);
+}
+
+body .connection-status .icon[color=red] {
+  background: var(--red-5);
+}
+
 body .estop {
   background: rgba(0, 0, 0, .15);
   font-size: 2.5em;

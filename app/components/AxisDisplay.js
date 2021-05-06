@@ -49,6 +49,10 @@ export default class AxisDisplay extends HTMLElement {
       });
     });
   }
+
+  profileSelected() {
+    this.select.dispatchEvent(new Event('change'));
+  }
 }
 
 window.customElements.define('axis-display', AxisDisplay);

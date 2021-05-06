@@ -9,7 +9,25 @@ import AxisDisplay from 'components/AxisDisplay';
 AppContext.socket = io(window.location.href);
 
 AppContext.socket.on('connect', () => {
-  console.log('opened');
+  document.querySelector('.connection-status .icon').setAttribute('color', 'green');
+  document.querySelector('.connection-status .text').innerHTML = 'Connected';
+
+  AppContext.socket.emit('cycle-duration.get', (duration) => {
+    durationEl.value = duration;
+  });
+
+  AppContext.socket.emit('motion.running', setMotionButton);
+
+  for(let name in axes) {
+    axes[name].profileSelected();
+  }
+});
+
+AppContext.socket.on('disconnect', () => {
+  document.querySelector('.connection-status .icon').setAttribute('color', 'red');
+  document.querySelector('.connection-status .text').innerHTML = 'Disconnected';
+
+  setMotionButton(false);
 });
 
 document.body.innerHTML = `
@@ -22,7 +40,12 @@ document.body.innerHTML = `
           <input type='text' name='cycle-duration' />
         </div>
       </div>
+      <div class='expand'></div>
 
+      <div class='connection-status'>
+        <div class='icon'></div>
+        <span class='text'>Pending...</div>
+      </div>
     </div>
   </div>
 `;
@@ -51,10 +74,6 @@ AppContext.socket.on('axis.position', (name, progress, position) => {
   axes[name].timeline.setMarker(progress, position);
 })
 
-AppContext.socket.emit('cycle-duration.get', (duration) => {
-  durationEl.value = duration;
-});
-
 durationEl.addEventListener('keypress', (evt) => {
   clearTimeout(durationTimeout);
 
@@ -80,8 +99,6 @@ motionButton.addEventListener('click', () => {
     AppContext.socket.emit('motion.stop');
   }
 });
-
-AppContext.socket.emit('motion.running', setMotionButton);
 
 function setMotionButton(r) {
   isRunning = r;
