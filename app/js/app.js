@@ -37,7 +37,7 @@ document.body.innerHTML = `
       <div>
         <h2>Cycle Duration</h2>
         <div class='input-container' units='ms'>
-          <input type='text' name='cycle-duration' />
+          <input type='number' name='cycle-duration' />
         </div>
       </div>
       <div class='expand'></div>
@@ -74,7 +74,10 @@ AppContext.socket.on('axis.position', (name, progress, position) => {
   axes[name].timeline.setMarker(progress, position);
 })
 
-durationEl.addEventListener('keypress', (evt) => {
+durationEl.addEventListener('keypress', setTypingTimeout);
+durationEl.addEventListener('keyup', setTypingTimeout);
+
+function setTypingTimeout(evt) {
   clearTimeout(durationTimeout);
 
   if(evt.keyCode === 13) {
@@ -82,7 +85,7 @@ durationEl.addEventListener('keypress', (evt) => {
   } else {
     durationTimeout = setTimeout(setDuration, 500);
   }
-});
+}
 
 function setDuration() {
   AppContext.socket.emit('cycle-duration.set', durationEl.value);

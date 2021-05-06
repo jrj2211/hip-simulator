@@ -59,7 +59,7 @@ class Simulation {
 
       if(value !== undefined || Number.isNaN(value) === false) {
         this.io.to("frame").emit('axis.position', name, progress, value);
-        this.rc.goToPosition(profile.motor, value, 10000, 0, 0, 1);
+        this.rc.goToPosition(profile.motor, value, 10000, 10000, 10000, 1);
       }
     }
 

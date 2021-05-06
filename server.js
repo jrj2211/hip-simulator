@@ -101,6 +101,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('cycle-duration.set', (duration) => {
+    console.log(duration);
     simulation.duration = duration;
   });
 
