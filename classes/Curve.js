@@ -14,6 +14,8 @@ class Curve {
       const frameProgress = frame % 1;
       const value = start + ((end - start) * frameProgress);
 
+      this.value = value;
+
       return value;
     }
   }

@@ -41,6 +41,11 @@ class Simulation {
     for(let name in this.profiles) {
       this.io.to("frame").emit('axis.position', name, null);
     }
+
+    for(let name in this.profiles) {
+      const profile = this.profiles[name];
+      this.rc.forward(profile.motor, 0);
+    }
   }
 
   update(deltaTime) {
@@ -54,7 +59,7 @@ class Simulation {
 
       if(value !== undefined || Number.isNaN(value) === false) {
         this.io.to("frame").emit('axis.position', name, progress, value);
-        //this.rc.goToPosition(profile.motor, positions[name], 1000, 1000, 1000);
+        this.rc.goToPosition(profile.motor, value, 10000, 0, 0, 1);
       }
     }
 

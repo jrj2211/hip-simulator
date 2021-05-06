@@ -50,13 +50,18 @@ class Roboclaw extends serialport {
   }
 
   goToPosition(motor, position, speed, accel, decel, buffer) {
+    const cmds = [
+      Roboclaw.CMD.M1_POS_WITH_SPEED_ACCEL_DECEL,
+      Roboclaw.CMD.M2_POS_WITH_SPEED_ACCEL_DECEL
+    ]
+
     const packet = new Packet(21);
     packet.setUint8(0, this.getMotorAddress(motor));
-    packet.setUint8(1, Roboclaw.CMD.M1_POS_WITH_SPEED_ACCEL_DECEL);
-    packet.setInt32(2, accel * this.scaleFactor);
-    packet.setInt32(6, speed * this.scaleFactor);
-    packet.setInt32(10, decel * this.scaleFactor);
-    packet.setInt32(14, position * this.scaleFactor);
+    packet.setUint8(1, this.getMotorCommand(motor, cmds));
+    packet.setInt32(2, Math.round(accel * this.scaleFactor));
+    packet.setInt32(6, Math.round(speed * this.scaleFactor));
+    packet.setInt32(10, Math.round(decel * this.scaleFactor));
+    packet.setInt32(14, Math.round(position * this.scaleFactor));
     packet.setUint8(18, buffer);
 
     this.write(packet.bytes);
@@ -98,7 +103,8 @@ Roboclaw.CMD = {
   TURN: 13,
 
   // Advanced
-  M1_POS_WITH_SPEED_ACCEL_DECEL: 65
+  M1_POS_WITH_SPEED_ACCEL_DECEL: 65,
+  M2_POS_WITH_SPEED_ACCEL_DECEL: 66,
 };
 
 module.exports = Roboclaw;
