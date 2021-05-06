@@ -5,7 +5,6 @@ const Packet = require('classes/Packet');
 const START_ADDRESS = 0x80;
 const MAX_MOTORS = 16;
 
-
 class Roboclaw extends serialport {
   constructor(port, options) {
     super(port, options);

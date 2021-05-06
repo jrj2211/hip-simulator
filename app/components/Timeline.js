@@ -1,21 +1,15 @@
-import './timeline.css';
+import './Timeline.css';
 
 export default class Timeline extends HTMLElement {
-  constructor(name, color = 0xFF0000) {
+  constructor(color = 0xFF0000) {
     super();
 
-    this.name = name;
     this.color = color;
-    this.padding = 25;
+    this.paddingTop = 45;
+    this.paddingBottom = 20;
 
     this.canvas = document.createElement("canvas");
     this.ctx = this.canvas.getContext("2d");
-
-    this.data = [];
-
-    this.innerHTML = `
-      <h1>${this.name}</h1>
-    `;
 
     this.appendChild(this.canvas);
 
@@ -23,7 +17,6 @@ export default class Timeline extends HTMLElement {
   }
 
   connectedCallback() {
-    this.draw();
     window.addEventListener('resize', this.draw);
   }
 
@@ -36,6 +29,12 @@ export default class Timeline extends HTMLElement {
     if(this.isConnected) {
       this.draw();
     }
+
+    this.setAttribute('has-data', this.data && this.data?.length > 0);
+  }
+
+  get padding() {
+    return this.paddingTop + this.paddingBottom;
   }
 
   draw() {
@@ -45,24 +44,23 @@ export default class Timeline extends HTMLElement {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = `#${this.color.toString(16)}`;
-    this.ctx.fillStyle = `#${this.color.toString(16)}`;
+    this.ctx.strokeStyle = this.color;
+    this.ctx.fillStyle = this.color;
     this.ctx.lineWidth = 3;
 
-    const spacing = this.canvas.width / (this.data.length - 1);
-
-    if(this.data.length > 0) {
+    if(this.data && this.data.length > 0) {
+      const spacing = this.canvas.width / (this.data.length - 1);
       const minY = Math.min(...this.data);
       const maxY = Math.max(...this.data);
       const yDiff = maxY - minY;
-      const height = this.canvas.height - (this.padding * 2);
+      const height = this.canvas.height - this.padding;
 
       const getX = (point) => {
         point -= minY;
         point /= yDiff;
         point = 1 - point;
         point *= height;
-        point += this.padding;
+        point += this.paddingTop;
         return point;
       }
 

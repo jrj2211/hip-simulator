@@ -34,8 +34,6 @@ class Curve {
     const frameProgress = (progess * this.frames.length) % 1;
     const value = start + ((end - start) * frameProgress);
 
-    console.log(value);
-
     this.rc.goToPosition(1, value, 1000, 1000, 1000, 1);
 
     this.elapsed += deltaTime;

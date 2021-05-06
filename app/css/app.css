@@ -2,32 +2,87 @@ html[data-theme=dark] {
   background: #2C2F37;
 }
 
-.graphs {
+body {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  height: 100%;
+  color: white;
+}
+
+body .container {
+  margin: 50px;
+  display: grid;
+  grid-template-columns: 300px 1fr 1fr;
+  grid-auto-rows: auto;
+  gap: 50px;
+}
+
+body .controls {
+  grid-row: 1 / 3;
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
-.graphs>* {
-  flex-grow: 1;
-  flex-basis: 200px;
+body .estop {
+  background: rgba(0, 0, 0, .15);
+  font-size: 2.5em;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
 }
 
-body {
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
+body .estop:hover {
+  background: rgba(0, 0, 0, .25);
+  cursor: pointer;
 }
 
-body .graphs {
-  flex-basis: 800px;
-  overflow-y: scroll;
-  padding: 30px;
-  background: rgba(0, 0, 0, .1);
+body button[name=motion] {
+  width: 100%;
+  padding: 15px;
+  border: 0;
+  border-radius: 0;
+  color: white;
+  font-size: 2.5em;
+  font-weight: bold;
 }
 
-body .controls {
-  flex-grow: 1;
+body button[name=motion][action=start] {
+  background: var(--blue-5);
+}
+
+body button[name=motion][action=start]:hover {
+  background: var(--blue-4);
+}
+
+input[type=text],
+input[type=password] {
+  background: rgba(0, 0, 0, .2);
+  border: 1px solid rgba(255, 255, 255, .1);
+  padding: 15px;
+  font-size: 1.2em;
+  width: 100%;
+  color: white;
+  outline: none;
+  position: relative;
+}
+
+.input-container {
+  position: relative;
+}
+
+.input-container[units]:after {
+  content: attr(units);
+  position: absolute;
+  top: 1;
+  bottom: 1;
+  right: 1;
+  display: grid;
+  align-items: center;
+  opacity: .5;
+  padding: 0 20px;
+  background: rgba(0, 0, 0, .2);
 }
 
 /* width */

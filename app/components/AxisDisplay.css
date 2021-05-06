@@ -1,0 +1,25 @@
+axis-display {
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+axis-display select {
+  background: rgba(0, 0, 0, .1);
+  border: 1px solid rgba(255, 255, 255, .05);
+  padding: 15px;
+  font-size: 1.2em;
+  width: 100%;
+  color: white;
+  outline: none;
+}
+
+axis-display select option {
+  background: #1F2126;
+}
+
+axis-display .label {
+  position: absolute;
+  padding: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}

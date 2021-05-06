@@ -1,0 +1,30 @@
+motor-timeline {
+  display: block;
+  position: relative;
+}
+
+motor-timeline canvas {
+  background: rgba(255, 255, 255, .05);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+motor-timeline h1 {
+  font-size: 1.25em;
+  margin: 0 0 15px 0;
+  color: white;
+}
+
+motor-timeline:not([has-data=true]):after {
+  content: 'Select Profile To View Chart';
+  position: absolute;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: rgba(255, 255, 255, .6);
+}

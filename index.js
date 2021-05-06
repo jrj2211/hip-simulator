@@ -5,12 +5,17 @@ const path = require('path');
 const fs = require('fs');
 
 const Roboclaw = require('classes/Roboclaw.js');
-const Curve = require('classes/Curve.js');
+const Simulation = require('classes/Simulation.js');
+
+const simulation = new Simulation();
 
 const eventLoop = require('classes/EventLoop.js');
 
 const express = require('express');
 const app = express();
+const http = require('http').Server(app);
+
+const io = require('socket.io')(http);
 
 if(process.env.NODE_ENV == 'development') {
   console.log('Running in development mode!');
@@ -34,11 +39,31 @@ app.set('views', path.resolve(__dirname, 'dist'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
+app.get('/api/profiles/:axis/:name', async (req, res) => {
+  const filePath = path.join(__dirname, 'profiles', req.params.axis, req.params.name);
+  try {
+    let file = await fs.promises.readFile(filePath, 'utf8');
+    if(file) {
+      file = file.replace(/(\r\n|\n|\r)/gm, '');
+      const points = file.split(',');
+      for(let i in points) {
+        points[i] = parseFloat(points[i]);
+      }
+      res.json(points);
+    } else {
+      res.json(null);
+    }
+  } catch(error) {
+    res.status(400).json({error});
+  }
+})
+
+
 app.get('*', (req, res) => {
   res.render('index.html');
 })
 
-app.listen(process.env.PORT, () => {
+http.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}`);
 });
 
@@ -55,4 +80,35 @@ rc.on('open', () => {
 
 rc.on('error', (err) => {
   console.error('SerialPort:', err);
+});
+
+io.on('connection', (socket) => {
+
+  socket.on('profiles.list', async (axis, callback) => {
+    const dirPath = path.join(__dirname, 'profiles', axis);
+
+    try {
+      const files = await fs.promises.readdir(dirPath);
+      callback(files);
+    } catch(error) {
+      callback({error});
+    }
+  });
+
+  socket.on('cycle-duration.get', async (callback) => {
+    callback(simulation.duration);
+  });
+
+  socket.on('cycle-duration.set', async (duration) => {
+    simulation.duration = duration;
+  });
+
+  socket.on('axis.profile.get', async (name, callback) => {
+    callback(simulation.getProfile(name));
+  });
+
+  socket.on('axis.profile.set', async (name, file, callback) => {
+    const points = await simulation.setProfile(name, file);
+    callback(points);
+  });
 });
