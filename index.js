@@ -7,9 +7,8 @@ const fs = require('fs');
 const Roboclaw = require('classes/Roboclaw.js');
 const Simulation = require('classes/Simulation.js');
 
-const simulation = new Simulation();
-
 const eventLoop = require('classes/EventLoop.js');
+eventLoop.start();
 
 const express = require('express');
 const app = express();
@@ -67,8 +66,6 @@ http.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}`);
 });
 
-eventLoop.start();
-
 const rc = new Roboclaw('/dev/ttyS0', {
   baudRate: Number.parseInt(process.env.BAUDRATE, 10),
   scaleFactor: 20305 / 360,
@@ -82,7 +79,11 @@ rc.on('error', (err) => {
   console.error('SerialPort:', err);
 });
 
+const simulation = new Simulation(rc, io);
+
 io.on('connection', (socket) => {
+
+  socket.join('frame');
 
   socket.on('profiles.list', async (axis, callback) => {
     const dirPath = path.join(__dirname, 'profiles', axis);
@@ -95,20 +96,32 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('cycle-duration.get', async (callback) => {
+  socket.on('cycle-duration.get', (callback) => {
     callback(simulation.duration);
   });
 
-  socket.on('cycle-duration.set', async (duration) => {
+  socket.on('cycle-duration.set', (duration) => {
     simulation.duration = duration;
   });
 
-  socket.on('axis.profile.get', async (name, callback) => {
+  socket.on('axis.profile.get', (name, callback) => {
     callback(simulation.getProfile(name));
   });
 
   socket.on('axis.profile.set', async (name, file, callback) => {
     const points = await simulation.setProfile(name, file);
     callback(points);
+  });
+
+  socket.on('motion.start', () => {
+    simulation.start();
+  });
+
+  socket.on('motion.stop', () => {
+    simulation.stop();
+  });
+
+  socket.on('motion.running', (callback) => {
+    callback(simulation.running);
   });
 });

@@ -1,46 +1,21 @@
-const eventLoop = require('classes/EventLoop.js');
-
 class Curve {
-  constructor(rc, duration, frames) {
-    this.frames = frames;
-    this.duration = duration;
-    this.rc = rc;
+  constructor( points) {
+    this.points = points;
   }
 
-  start() {
-    eventLoop.register(this);
-    this.elapsed = 0;
-    this.value = this.frames[0];
-  }
+  update(progress) {
+    if(Array.isArray(this.points)) {
+      const frame = progress * (this.points.length - 1)
+      const index = Math.floor(frame);
 
-  reset() {
-    this.elapsed = 0;
-    this.value = this.frames[0];
-  }
+      const start = this.points[index];
+      const end = this.points[index + 1];
 
-  update(deltaTime) {
-    const progess = (this.elapsed / this.duration);
-    const index = Math.floor(progess * (this.frames.length - 1));
+      const frameProgress = frame % 1;
+      const value = start + ((end - start) * frameProgress);
 
-    const start = this.frames[index];
-    const end = this.frames[index + 1];
-
-    if(end === undefined)  {
-      this.elapsed = (this.elapsed + deltaTime) - this.duration;
-      this.value = this.frames[0];
-      return this.update(deltaTime);
+      return value;
     }
-
-    const frameProgress = (progess * this.frames.length) % 1;
-    const value = start + ((end - start) * frameProgress);
-
-    this.rc.goToPosition(1, value, 1000, 1000, 1000, 1);
-
-    this.elapsed += deltaTime;
-  }
-
-  stop() {
-    eventLoop.unregister(this);
   }
 }
 

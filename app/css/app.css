@@ -3,10 +3,10 @@ html[data-theme=dark] {
 }
 
 body {
-  display: grid;
-  grid-template-rows: 1fr auto;
+  display: flex;
   overflow: hidden;
   height: 100%;
+  width: 100%;
   color: white;
 }
 
@@ -16,6 +16,7 @@ body .container {
   grid-template-columns: 300px 1fr 1fr;
   grid-auto-rows: auto;
   gap: 50px;
+  width: 100%;
 }
 
 body .controls {
@@ -54,6 +55,14 @@ body button[name=motion][action=start] {
 
 body button[name=motion][action=start]:hover {
   background: var(--blue-4);
+}
+
+body button[name=motion][action=stop] {
+  background: var(--red-5);
+}
+
+body button[name=motion][action=stop]:hover {
+  background: var(--red-4);
 }
 
 input[type=text],

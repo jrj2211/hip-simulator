@@ -2,27 +2,63 @@ const Curve = require('classes/Curve.js');
 const path = require('path');
 const fs = require('fs');
 
+const eventLoop = require('classes/EventLoop.js');
+
+
 class Simulation {
-  constructor() {
-    this.duration = 1000;
+  constructor(rc, io) {
+    this.duration = parseFloat(process.env.CYCLE_DURATION);
     this.profiles = {}
     this.running = false;
+    this.elapsed = 0;
+    this.rc = rc;
+    this.io = io;
 
-    this.addAxis('flexion');
-    this.addAxis('rotation');
-    this.addAxis('abduction');
-    this.addAxis('load');
+    this.addAxis('flexion', process.env.AXIS_FLEXION);
+    this.addAxis('abduction', process.env.AXIS_ABDUCTION);
+    this.addAxis('rotation', process.env.AXIS_ROTATION);
+    this.addAxis('load', process.env.AXIS_LOAD);
   }
 
-  addAxis(name) {
+  addAxis(name, motor) {
     this.profiles[name] = {
       file: null,
       curve: new Curve(),
+      motor
     }
   }
 
-  update() {
+  start() {
+    this.elapsed = 0;
+    this.running = true;
+    eventLoop.register(this);
+  }
 
+  stop() {
+    this.running = false;
+    eventLoop.unregister(this);
+
+    for(let name in this.profiles) {
+      this.io.to("frame").emit('axis.position', name, null);
+    }
+  }
+
+  update(deltaTime) {
+    const progress = ((this.elapsed % this.duration) / this.duration);
+
+    const positions = {};
+
+    for(let name in this.profiles) {
+      const profile = this.profiles[name];
+      const value = profile.curve.update(progress);
+
+      if(value !== undefined || Number.isNaN(value) === false) {
+        this.io.to("frame").emit('axis.position', name, progress, value);
+        //this.rc.goToPosition(profile.motor, positions[name], 1000, 1000, 1000);
+      }
+    }
+
+    this.elapsed += deltaTime;
   }
 
   getProfile(name) {

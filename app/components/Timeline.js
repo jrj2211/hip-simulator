@@ -14,6 +14,8 @@ export default class Timeline extends HTMLElement {
     this.appendChild(this.canvas);
 
     this.draw = this.draw.bind(this);
+
+    this.marker = null;
   }
 
   connectedCallback() {
@@ -72,7 +74,29 @@ export default class Timeline extends HTMLElement {
       }
 
       this.ctx.stroke();
+
+      if(this.marker) {
+        const position = [this.canvas.scrollWidth * this.marker[0], getX(this.marker[1])];
+        this.ctx.beginPath();
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.arc(position[0], position[1], 6, 0, 2 * Math.PI);
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.fillStyle = this.color;
+        this.ctx.arc(position[0], position[1], 4, 0, 2 * Math.PI);
+        this.ctx.fill();
+      }
     }
+  }
+
+  setMarker(progress, value) {
+    if(progress !== null && value !== null) {
+      this.marker = [progress, value];
+    } else {
+      this.marker = null;
+    }
+    this.draw();
   }
 }
 

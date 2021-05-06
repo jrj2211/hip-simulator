@@ -24,11 +24,6 @@ document.body.innerHTML = `
       </div>
 
     </div>
-
-  </div>
-
-  <div class='estop'>
-    E-STOP (SPACE)
   </div>
 `;
 
@@ -52,6 +47,10 @@ for(let name in axes) {
 const durationEl = document.querySelector('input[name=cycle-duration]');
 let durationTimeout = null;
 
+AppContext.socket.on('axis.position', (name, progress, position) => {
+  axes[name].timeline.setMarker(progress, position);
+})
+
 AppContext.socket.emit('cycle-duration.get', (duration) => {
   durationEl.value = duration;
 });
@@ -68,5 +67,29 @@ durationEl.addEventListener('keypress', (evt) => {
 
 function setDuration() {
   AppContext.socket.emit('cycle-duration.set', durationEl.value);
+}
 
+const motionButton = document.querySelector('button[name=motion]');
+let isRunning = false;
+
+motionButton.addEventListener('click', () => {
+  setMotionButton(!isRunning);
+  if(isRunning) {
+    AppContext.socket.emit('motion.start');
+  } else {
+    AppContext.socket.emit('motion.stop');
+  }
+});
+
+AppContext.socket.emit('motion.running', setMotionButton);
+
+function setMotionButton(r) {
+  isRunning = r;
+  if(isRunning) {
+    motionButton.innerHTML = 'Stop';
+    motionButton.setAttribute('action', 'stop');
+  } else {
+    motionButton.innerHTML = 'Start';
+    motionButton.setAttribute('action', 'start');
+  }
 }
