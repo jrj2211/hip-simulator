@@ -7,24 +7,25 @@ const eventLoop = require('classes/EventLoop.js');
 
 class Simulation {
   constructor(rc, io) {
-    this.duration = parseFloat(process.env.CYCLE_DURATION);
+    this.data = {
+      duration: parseInt(process.config.get('cycle_duration'))
+    };
     this.profiles = {}
     this.running = false;
     this.elapsed = 0;
     this.rc = rc;
     this.io = io;
 
-    this.addAxis('flexion', process.env.AXIS_FLEXION);
-    this.addAxis('abduction', process.env.AXIS_ABDUCTION);
-    this.addAxis('rotation', process.env.AXIS_ROTATION);
-    this.addAxis('load', process.env.AXIS_LOAD);
+    this.addAxis('flexion');
+    this.addAxis('abduction');
+    this.addAxis('rotation');
+    this.addAxis('load');
   }
 
-  addAxis(name, motor) {
+  addAxis(name) {
     this.profiles[name] = {
       file: null,
       curve: new Curve(),
-      motor
     }
   }
 
@@ -48,18 +49,38 @@ class Simulation {
     }
   }
 
+  get duration() {
+    return this.data.duration;
+  }
+
+  set duration(duration) {
+    console.log('Setting Duration:', duration);
+    process.config.set('cycle_duration', parseInt(duration, 10));
+    this.data.duration = duration;
+  }
+
   update(deltaTime) {
-    const progress = ((this.elapsed % this.duration) / this.duration);
+    const progress = ((this.elapsed % this.data.duration) / this.data.duration);
 
     const positions = {};
 
+    const axes = process.config.get('axis');
+
     for(let name in this.profiles) {
       const profile = this.profiles[name];
-      const value = profile.curve.update(progress);
+      const motorPos = profile.curve.update(progress);
+      const params = axes[name];
 
-      if(value !== undefined || Number.isNaN(value) === false) {
-        this.io.to("frame").emit('axis.position', name, progress, value);
-        this.rc.goToPosition(profile.motor, value, 10000, 10000, 10000, 1);
+      if(motorPos !== undefined && Number.isNaN(motorPos) === false) {
+        this.io.to("frame").emit('axis.position', name, progress, motorPos);
+        const scale_factor = params.gear_ratio * params.cpr * 4;
+
+        this.rc.goToPosition(params.channel,
+          motorPos * scale_factor,
+          (params.speed / params.cpr) * scale_factor,
+          (params.accel / params.cpr) * scale_factor,
+          (params.decel / params.cpr) * scale_factor,
+        );
       }
     }
 
@@ -79,6 +100,18 @@ class Simulation {
     }
 
     return profile.curve.points;
+  }
+
+  async deleteProfile(name, file) {
+    const profile = this.profiles[name];
+
+    const filePath = path.join(process.cwd(), 'profiles', name, file);
+    await fs.promises.unlink(filePath);
+
+    if(profile.file == file) {
+      profile.file = null;
+      return true;
+    }
   }
 
   async getProfilePoints(name) {

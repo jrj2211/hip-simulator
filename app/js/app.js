@@ -1,5 +1,10 @@
 import 'css/standard.css';
 import 'css/app.css';
+import 'css/tooltip.css';
+
+import '@fortawesome/fontawesome-free/js/fontawesome'
+import '@fortawesome/fontawesome-free/js/solid'
+import '@fortawesome/fontawesome-free/js/regular'
 
 import AppContext from 'js/AppContext';
 

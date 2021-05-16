@@ -4,13 +4,13 @@ axis-display {
 }
 
 axis-display select {
-  background: rgba(0, 0, 0, .1);
-  border: 1px solid rgba(255, 255, 255, .05);
   padding: 15px;
   font-size: 1.2em;
   width: 100%;
   color: white;
   outline: none;
+  background: transparent;
+  border: 0;
 }
 
 axis-display select option {
@@ -22,4 +22,35 @@ axis-display .label {
   padding: 10px;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+axis-display .bottom {
+  background: rgba(0, 0, 0, .1);
+  border: 1px solid rgba(255, 255, 255, .05);
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+}
+
+axis-display label,
+axis-display button {
+  display: grid;
+  align-items: center;
+  padding: 0 15px;
+  border: 0;
+  background: transparent;
+  color: white;
+  height: 100%;
+  cursor: pointer;
+}
+
+axis-display [name=upload]:hover {
+  color: dodgerblue;
+}
+
+axis-display [name=delete]:hover {
+  color: crimson;
+}
+
+axis-display input[type=file] {
+  display: none;
 }

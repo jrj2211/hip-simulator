@@ -1,6 +1,17 @@
 require('dotenv').config();
 require('app-module-path').addPath(__dirname);
 
+
+// Parse config file
+const yaml = require('js-yaml');
+const Conf = require('conf');
+process.config = new Conf({
+  cwd: process.cwd(),
+  fileExtension: 'yaml',
+	serialize: yaml.dump,
+	deserialize: yaml.load,
+});
+
 const path = require('path');
 const fs = require('fs');
 
@@ -13,6 +24,7 @@ eventLoop.start();
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
+const multer = require('multer');
 
 const io = require('socket.io')(http);
 
@@ -55,8 +67,21 @@ app.get('/api/profiles/:axis/:name', async (req, res) => {
   } catch(error) {
     res.status(400).json({error});
   }
-})
+});
 
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `profiles/${req.params.axis}`);
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.originalname);
+  }
+})
+var upload = multer({ storage: storage })
+
+app.post('/api/profiles/:axis/upload', upload.any(), async (req, res) => {
+  res.json({error: false});
+});
 
 app.get('*', (req, res) => {
   res.render('index.html');
@@ -67,8 +92,7 @@ http.listen(process.env.PORT, () => {
 });
 
 const rc = new Roboclaw('/dev/ttyS0', {
-  baudRate: Number.parseInt(process.env.BAUDRATE, 10),
-  scaleFactor: 20305 / 360,
+  baudRate: Number.parseInt(process.config.get('baudrate'), 10),
 });
 
 rc.on('open', () => {
@@ -101,7 +125,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('cycle-duration.set', (duration) => {
-    console.log(duration);
     simulation.duration = duration;
   });
 
@@ -111,7 +134,16 @@ io.on('connection', (socket) => {
 
   socket.on('axis.profile.set', async (name, file, callback) => {
     const points = await simulation.setProfile(name, file);
-    callback(points);
+    if(typeof callback === 'function') {
+      callback(points);
+    }
+  });
+
+  socket.on('axis.profile.delete', async (name, file, callback) => {
+    const results = await simulation.deleteProfile(name, file);
+    if(typeof callback === 'function') {
+      callback(results);
+    }
   });
 
   socket.on('motion.start', () => {

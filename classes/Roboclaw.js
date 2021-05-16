@@ -9,14 +9,12 @@ class Roboclaw extends serialport {
   constructor(port, options) {
     super(port, options);
 
-    this.scaleFactor = options.scaleFactor || 1;
-
     this.parser = this.pipe(new ByteLength({length: 1}));
     this.parser.on('data', this.onData.bind(this));
   }
 
   onData(bytes) {
-
+    // Not doing anything with ACK
   }
 
   updateCrc(data) {
@@ -39,31 +37,50 @@ class Roboclaw extends serialport {
     const cmds = [
       Roboclaw.CMD.M1_FORWARD,
       Roboclaw.CMD.M2_FORWARD
-    ]
+    ];
 
     const packet = new Packet(5);
     packet.setUint8(0, this.getMotorAddress(motor));
     packet.setUint8(1, this.getMotorCommand(motor, cmds));
     packet.setUint8(2, speed);
-
     this.write(packet.bytes);
   }
 
-  goToPosition(motor, position, speed, accel, decel, buffer) {
+  goToPosition(motor, position, speed, accel, decel, buffer = 1) {
     const cmds = [
       Roboclaw.CMD.M1_POS_WITH_SPEED_ACCEL_DECEL,
       Roboclaw.CMD.M2_POS_WITH_SPEED_ACCEL_DECEL
-    ]
+    ];
 
     const packet = new Packet(21);
     packet.setUint8(0, this.getMotorAddress(motor));
     packet.setUint8(1, this.getMotorCommand(motor, cmds));
-    packet.setInt32(2, Math.round(accel * this.scaleFactor));
-    packet.setInt32(6, Math.round(speed * this.scaleFactor));
-    packet.setInt32(10, Math.round(decel * this.scaleFactor));
-    packet.setInt32(14, Math.round(position * this.scaleFactor));
+    packet.setInt32(2, Math.round(accel));
+    packet.setInt32(6, Math.round(speed));
+    packet.setInt32(10, Math.round(decel));
+    packet.setInt32(14, Math.round(position / 360));
     packet.setUint8(18, buffer);
+    this.write(packet.bytes);
+  }
 
+  setEncValue(motor, value = 0) {
+    const cmds = [
+      Roboclaw.CMD.M1_SET_ENC_VALUE,
+      Roboclaw.CMD.M2_SET_ENC_VALUE
+    ]
+
+    const packet = new Packet(8);
+    packet.setUint8(0, this.getMotorAddress(motor));
+    packet.setUint8(1, this.getMotorCommand(motor, cmds));
+    packet.setInt32(2, Math.round(value));
+    this.write(packet.bytes);
+  }
+
+  resetEncValue(roboclaw) {
+    const packet = new Packet(4);
+    packet.setUint8(0, START_ADDRESS + roboclaw);
+    packet.setUint8(1, Roboclaw.CMD.RESET_ENC_VALUE);
+    packet.setInt32(2, Math.round(value));
     this.write(packet.bytes);
   }
 
@@ -105,6 +122,9 @@ Roboclaw.CMD = {
   // Advanced
   M1_POS_WITH_SPEED_ACCEL_DECEL: 65,
   M2_POS_WITH_SPEED_ACCEL_DECEL: 66,
+  RESET_ENC_VALUE: 20,
+  M1_SET_ENC_VALUE: 22,
+  M2_SET_ENC_VALUE: 23,
 };
 
 module.exports = Roboclaw;
