@@ -39,6 +39,7 @@ document.body.innerHTML = `
   <div class='container '>
     <div class='controls'>
       <button name='motion' action='start'>Start</button>
+      <button name='goToStart'>Go To Start</button>
       <div>
         <h2>Cycle Duration</h2>
         <div class='input-container' units='ms'>
@@ -146,3 +147,9 @@ function setMotionButton(r) {
     motionButton.setAttribute('action', 'start');
   }
 }
+
+const goToStartButton = document.querySelector('button[name=goToStart]');
+
+goToStartButton.addEventListener('click', () => {
+  AppContext.socket.emit('motion.goToStart');
+});

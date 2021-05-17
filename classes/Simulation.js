@@ -42,6 +42,7 @@ class Simulation {
   }
 
   stop() {
+    this.elapsed = 0;
     this.running = false;
     this.loop.unregister(this);
 
@@ -49,6 +50,11 @@ class Simulation {
       this.io.to("frame").emit('axis.position', motor, null);
       this.rc.forward(motor, 0);
     }
+  }
+
+  goToStart() {
+    this.stop();
+    this.update();
   }
 
   get duration() {

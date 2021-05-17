@@ -158,6 +158,10 @@ function main() {
       }
     });
 
+    socket.on('motion.goToStart', () => {
+      simulation.goToStart();
+    });
+
     socket.on('motion.start', () => {
       simulation.start();
     });

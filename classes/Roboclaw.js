@@ -52,8 +52,6 @@ class Roboclaw extends serialport {
       Roboclaw.CMD.M2_POS_WITH_SPEED_ACCEL_DECEL
     ];
 
-    console.log(this.getMotorCommand(motor, cmds));
-
     const packet = new Packet(21);
     packet.setUint8(0, this.getMotorAddress(motor));
     packet.setUint8(1, this.getMotorCommand(motor, cmds));

@@ -47,7 +47,6 @@ export default class AxisDisplay extends HTMLElement {
       }
 
       AppContext.socket.emit('axis.profile.get', this.motor, (file) => {
-        console.log(this.motor, file)
         if(this.select.value != file) {
           this.select.value = file || "";
           this.select.dispatchEvent(new Event('change'));
