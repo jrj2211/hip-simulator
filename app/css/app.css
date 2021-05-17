@@ -95,6 +95,18 @@ body button[name=motion][action=stop]:hover {
   background: var(--red-4);
 }
 
+body .encoders {
+  background: rgba(0, 0, 0, .2);
+  border: 1px solid rgba(255, 255, 255, .1);
+  padding: 15px;
+  display: flex;
+}
+
+body .encoders>div {
+  flex-grow: 1;
+  text-align: center;
+}
+
 input[type=text],
 input[type=password],
 input[type=number] {

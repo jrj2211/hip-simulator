@@ -1,29 +1,31 @@
 baudrate: 230400
-cycle_duration: 2000
+cycle_duration: 1000
+ads_gain: 1
+ads_range: .82
 axis:
-  flexion:
-    channel: 1
+  0:
+    name: Flexion
     cpr: 100
     gear_ratio: 50
     speed: 360
     accel: 360
     decel: 360
-  abduction:
-    channel: 2
+  1:
+    name: Abduction
     cpr: 100
     gear_ratio: 50
     speed: 100
     accel: 50
     decel: 50
-  rotation:
-    channel: 3
+  2:
+    name: Rotation
     cpr: 100
     gear_ratio: 50
     speed: 100
     accel: 50
     decel: 50
-  load:
-    channel: 4
+  3:
+    name: Load
     cpr: 100
     gear_ratio: 50
     speed: 100

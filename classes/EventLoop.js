@@ -97,4 +97,4 @@ class EventLoop {
   }
 }
 
-module.exports = new EventLoop();
+module.exports = EventLoop;

@@ -45,6 +45,16 @@ document.body.innerHTML = `
           <input type='number' name='cycle-duration' />
         </div>
       </div>
+
+      <div >
+        <h2>Encoders</h2>
+        <div class='encoders'>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
       <div class='expand'></div>
 
       <div class='connection-status'>
@@ -58,10 +68,10 @@ document.body.innerHTML = `
 const container = document.body.querySelector('.container');
 
 const axes = {
-  'abduction': new AxisDisplay('abduction', 'Abduction', '#47BFF5'),
-  'flexion': new AxisDisplay('flexion', 'Flexion', '#F54782'),
-  'rotation': new AxisDisplay('rotation', 'Rotation', '#5EF547'),
-  'load': new AxisDisplay('load', 'Load', '#F58247'),
+  'abduction': new AxisDisplay(0, 'Abduction', '#47BFF5'),
+  'flexion': new AxisDisplay(1, 'Flexion', '#F54782'),
+  'rotation': new AxisDisplay(2, 'Rotation', '#5EF547'),
+  'load': new AxisDisplay(3, 'Load', '#F58247'),
 };
 
 for(let name in axes) {
@@ -75,9 +85,27 @@ for(let name in axes) {
 const durationEl = document.querySelector('input[name=cycle-duration]');
 let durationTimeout = null;
 
-AppContext.socket.on('axis.position', (name, progress, position) => {
-  axes[name].timeline.setMarker(progress, position);
-})
+AppContext.socket.on('axis.position', (motor, progress, position) => {
+  motor = parseInt(motor, 10);
+
+  for(let name in axes) {
+    if(axes[name].motor === motor) {
+      axes[name].timeline.setMarker(progress, position);
+    }
+  }
+});
+
+const encodersEl = document.querySelector('.encoders');
+
+AppContext.socket.on('ads.values', (values) => {
+  let html = '';
+
+  for(let value of values) {
+    html += `<div>${(value * 100).toFixed(1)}%</div>`;
+  }
+
+  encodersEl.innerHTML = html;
+});
 
 durationEl.addEventListener('keypress', setTypingTimeout);
 durationEl.addEventListener('keyup', setTypingTimeout);

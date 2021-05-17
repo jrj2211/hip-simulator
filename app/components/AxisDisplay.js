@@ -6,10 +6,10 @@ import AppContext from 'js/AppContext';
 const { socket } = AppContext;
 
 export default class AxisDisplay extends HTMLElement {
-  constructor(name, label, color) {
+  constructor(motor, label, color) {
     super();
 
-    this.name = name;
+    this.motor = motor;
 
     this.timeline = new Timeline(color);
 
@@ -35,10 +35,9 @@ export default class AxisDisplay extends HTMLElement {
   }
 
   connectedCallback() {
-    AppContext.socket.emit('profiles.list', this.name, (results) => {
-
+    AppContext.socket.emit('profiles.list', this.motor, (results) => {
       this.select.addEventListener('change', (evt) => {
-        AppContext.socket.emit('axis.profile.set', this.name, this.select.value, (points) => {
+        AppContext.socket.emit('axis.profile.set', this.motor, this.select.value, (points) => {
           this.timeline.points = points;
         });
       });
@@ -47,7 +46,8 @@ export default class AxisDisplay extends HTMLElement {
         this.addProfile(file);
       }
 
-      AppContext.socket.emit('axis.profile.get', this.name, (file) => {
+      AppContext.socket.emit('axis.profile.get', this.motor, (file) => {
+        console.log(this.motor, file)
         if(this.select.value != file) {
           this.select.value = file || "";
           this.select.dispatchEvent(new Event('change'));
@@ -65,7 +65,7 @@ export default class AxisDisplay extends HTMLElement {
         button.classList.add('fa-spin');
 
         $.ajax({
-           url : `api/profiles/${this.name}/upload`,
+           url : `api/profiles/${this.motor}/upload`,
            type : 'POST',
            data : formData,
            processData: false,  // tell jQuery not to process the data
@@ -90,7 +90,7 @@ export default class AxisDisplay extends HTMLElement {
     this.deleteButton.addEventListener('click', () => {
       if(this.select.value) {
         const file = this.select.value;
-        AppContext.socket.emit('axis.profile.delete', this.name, file, (results) => {
+        AppContext.socket.emit('axis.profile.delete', this.motor, file, (results) => {
           if(results === true) {
             this.select.querySelector(`[value='${file}']`).remove();
             this.profileSelected();

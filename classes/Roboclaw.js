@@ -52,6 +52,8 @@ class Roboclaw extends serialport {
       Roboclaw.CMD.M2_POS_WITH_SPEED_ACCEL_DECEL
     ];
 
+    console.log(this.getMotorCommand(motor, cmds));
+
     const packet = new Packet(21);
     packet.setUint8(0, this.getMotorAddress(motor));
     packet.setUint8(1, this.getMotorCommand(motor, cmds));
@@ -87,18 +89,18 @@ class Roboclaw extends serialport {
   getMotorAddress(motor) {
     // Take 1-16 and convert to roboclaw address
     if(motor > MAX_MOTORS || motor < 0) {
-      throw new Error(`Invalid motor number (1-${MAX_MOTORS})`);
+      throw new Error(`Invalid motor number (1-${MAX_MOTORS - 1})`);
     }
-    return START_ADDRESS + Math.floor((motor - 1) / 2);
+    return START_ADDRESS + Math.floor(motor / 2);
   }
 
   getMotorNumber(motor) {
     // Take 1-16 and convert to motor 1/2
-    return ((motor - 1) % 2) + 1;
+    return (motor) % 2;
   }
 
   getMotorCommand(motor, commands) {
-    return commands[this.getMotorNumber(motor) - 1];
+    return commands[this.getMotorNumber(motor)];
   }
 }
 
