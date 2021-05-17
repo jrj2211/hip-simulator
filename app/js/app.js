@@ -56,7 +56,13 @@ document.body.innerHTML = `
           <div></div>
         </div>
       </div>
-      <div class='expand'></div>
+
+      <div class='log-container expand'>
+        <h2>Logs</h2>
+        <div class='logs expand'>
+          <div class='log-list'></div>
+        </div>
+      </div>
 
       <div class='connection-status'>
         <div class='icon'></div>
@@ -153,3 +159,38 @@ const goToStartButton = document.querySelector('button[name=goToStart]');
 goToStartButton.addEventListener('click', () => {
   AppContext.socket.emit('motion.goToStart');
 });
+
+const logListEl = document.querySelector('.log-list');
+AppContext.socket.emit('logs.list', (list) => {
+  for(let file of list) {
+    logListEl.append(generateLog(file));
+  }
+});
+
+AppContext.socket.on('logs.add', (name) => {
+  console.log('here');
+  logListEl.append(generateLog(name));
+});
+
+
+function generateLog(name) {
+  const nameNoExt = name.replace(/\.[^/.]+$/, "");
+  const template = document.createElement('template');
+  template.innerHTML = `<div>
+    <div>${nameNoExt}</div>
+    <div action="delete"><i class="fas fa-trash" ></i></div>
+    <div action="download"><i class="fas fa-file-download"></i></div>
+  </div>`;
+
+  const el = template.content.firstChild;
+
+  el.querySelector('[action=delete]').addEventListener('click', () => {
+    AppContext.socket.emit('logs.delete', name, () => {
+      el.remove();
+    })
+  });
+  el.querySelector('[action=download]').addEventListener('click', () => {
+    window.location=`/api/logs/${name}`;
+  });
+  return el;
+}

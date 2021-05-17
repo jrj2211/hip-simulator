@@ -26,6 +26,10 @@ body .controls {
   gap: 30px;
 }
 
+body .controls h2 {
+  margin: 0 0 10px 0;
+}
+
 body .expand {
   flex-grow: 1;
 }
@@ -158,6 +162,56 @@ input[type=number] {
   opacity: .5;
   padding: 0 20px;
   background: rgba(0, 0, 0, .2);
+}
+
+.log-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+.log-list>div {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  font-size: .9em;
+}
+
+.log-list>div>* {
+  padding: 10px;
+}
+
+.log-list>div:nth-child(2n) {
+  background: rgba(0, 0, 0, .05);
+}
+
+.log-list>div:nth-child(2n+1) {
+  background: rgba(255, 255, 255, .05);
+}
+
+.log-list>div [action] {
+  color: rgba(255, 255, 255, .4);
+  cursor: pointer;
+}
+
+.log-list [action=download]:hover {
+  color: dodgerblue;
+}
+
+.log-list [action=delete]:hover {
+  color: crimson;
+}
+
+.log-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.logs {
+  position: relative;
+  height: 100%;
 }
 
 /* width */

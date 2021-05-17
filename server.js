@@ -19,6 +19,7 @@ const Roboclaw = require('classes/Roboclaw.js');
 const Simulation = require('classes/Simulation.js');
 const AnalogToDigital = require('classes/AnalogToDigital.js');
 const EventLoop = require('classes/EventLoop.js');
+const Logger = require('classes/Logger.js');
 
 const eventLoop = new EventLoop();
 eventLoop.start();
@@ -61,6 +62,10 @@ if(process.env.NODE_ENV == 'development') {
 
 function main() {
 
+  /*****************************************************************************
+   * ROUTES
+   ****************************************************************************/
+
   var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, `profiles/${req.params.motor}`);
@@ -94,6 +99,14 @@ function main() {
     res.json({error: false});
   });
 
+  app.get('/api/logs/:name', (req, res) => {
+    res.set('Content-disposition', 'attachment; filename=' + req.params.name);
+    res.set('Content-Type', 'text/plain');
+
+    const stream = logger.getFileStream(req.params.name);
+    stream.pipe(res);
+  })
+
   app.get('*', (req, res) => {
     res.render('index.html');
   })
@@ -101,6 +114,10 @@ function main() {
   http.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
   });
+
+  /*****************************************************************************
+   * CONTROL
+   ****************************************************************************/
 
   const rc = new Roboclaw('/dev/ttyS0', {
     baudRate: Number.parseInt(process.config.get('baudrate'), 10),
@@ -116,10 +133,18 @@ function main() {
 
   const simulation = new Simulation(rc, io, eventLoop);
 
+  const logger = new Logger('logs');
+
+
+  /*****************************************************************************
+   * Websocket Communication to GUI
+   ****************************************************************************/
+
   io.on('connection', (socket) => {
 
     socket.join('frame');
     socket.join('ads');
+    socket.join('logs');
 
     socket.on('profiles.list', async (motor, callback) => {
       const dirPath = path.join(__dirname, 'profiles', motor.toString());
@@ -173,11 +198,31 @@ function main() {
     socket.on('motion.running', (callback) => {
       callback(simulation.running);
     });
+
+    socket.on('logs.list', async (callback) => {
+      try {
+        callback(await logger.getList());
+      } catch(error) {
+        callback({error});
+      }
+    });
+
+    socket.on('logs.delete', async (name, callback) => {
+      try {
+        callback(await logger.delete(name));
+      } catch(error) {
+        callback({error});
+      }
+    });
+
   });
 
-  const logLoop = new EventLoop(10);
-  logLoop.start();
+  /*****************************************************************************
+   * Analog to Digital
+   ****************************************************************************/
   const ads = new AnalogToDigital();
+
+  // Update the motor encoder based on ads value at boot
   ads.once('averages', (values) => {
     for(let motor in values) {
       const params = simulation.getMotorParams(motor);
@@ -187,8 +232,43 @@ function main() {
     }
   });
 
+  /*****************************************************************************
+   * LOGGING
+   ****************************************************************************/
+  const logLoop = new EventLoop(10);
+
+  logLoop.register(ads);
+  logLoop.start();
+
+  simulation.on('stop', async () => {
+    try {
+      const name = await logger.save();
+      io.to("logs").emit('logs.add', name);
+    } catch(err) {
+      console.error(err);
+    }
+  });
+
+  // Setup the logger
+  logger.setHeaders([
+    'A1',
+    'A2',
+    'A3',
+    'A3',
+    'Load'
+  ]);
+
+  // On new encoder values
   ads.on('update', (values) => {
     io.to("ads").emit('ads.values', values);
+    if(simulation.running) {
+      logger.add([
+        values[1],
+        values[2],
+        values[3],
+        values[4],
+        null
+      ]);
+    }
   });
-  logLoop.register(ads);
 }

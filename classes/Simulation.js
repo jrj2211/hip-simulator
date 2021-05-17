@@ -1,3 +1,4 @@
+const EventEmitter = require('events');
 const Curve = require('classes/Curve.js');
 const path = require('path');
 const fs = require('fs');
@@ -5,8 +6,10 @@ const fs = require('fs');
 const eventLoop = require('classes/EventLoop.js');
 
 
-class Simulation {
+class Simulation extends EventEmitter {
   constructor(rc, io, loop) {
+    super();
+    
     this.data = {
       duration: parseInt(process.config.get('cycle_duration'))
     };
@@ -39,6 +42,8 @@ class Simulation {
     this.elapsed = 0;
     this.running = true;
     this.loop.register(this);
+
+    this.emit('start');
   }
 
   stop() {
@@ -50,6 +55,8 @@ class Simulation {
       this.io.to("frame").emit('axis.position', motor, null);
       this.rc.forward(motor, 0);
     }
+
+    this.emit('stop');
   }
 
   goToStart() {
