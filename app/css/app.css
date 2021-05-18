@@ -203,6 +203,17 @@ input[type=number] {
   overflow: auto;
 }
 
+.log-list:empty:after {
+  content: 'No Logs';
+  text-align: center;
+  background: rgba(0, 0, 0, .1);
+  padding: 25px;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  color: rgba(255, 255, 255, .75);
+}
+
 .log-list>div {
   display: grid;
   grid-template-columns: 1fr auto auto;
