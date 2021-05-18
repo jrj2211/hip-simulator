@@ -14,8 +14,8 @@ import AxisDisplay from 'components/AxisDisplay';
 AppContext.socket = io(window.location.href);
 
 AppContext.socket.on('connect', () => {
-  document.querySelector('.connection-status .icon').setAttribute('color', 'green');
-  document.querySelector('.connection-status .text').innerHTML = 'Connected';
+  document.querySelector('.footer .icon').setAttribute('color', 'green');
+  document.querySelector('.footer .text').innerHTML = 'Connected';
 
   AppContext.socket.emit('cycle-duration.get', (duration) => {
     durationEl.value = duration;
@@ -29,8 +29,8 @@ AppContext.socket.on('connect', () => {
 });
 
 AppContext.socket.on('disconnect', () => {
-  document.querySelector('.connection-status .icon').setAttribute('color', 'red');
-  document.querySelector('.connection-status .text').innerHTML = 'Disconnected';
+  document.querySelector('.footer .icon').setAttribute('color', 'red');
+  document.querySelector('.footer .text').innerHTML = 'Disconnected';
 
   setMotionButton(false);
 });
@@ -57,6 +57,14 @@ document.body.innerHTML = `
         </div>
       </div>
 
+      <div>
+        <h2>Load Cell</h2>
+        <div class='loadcell'>
+          <div class='value'></div>
+          <div class='copy'><i class="far fa-copy"></i></div>
+        </div>
+      </div>
+
       <div class='log-container expand'>
         <h2>Logs</h2>
         <div class='logs expand'>
@@ -64,9 +72,13 @@ document.body.innerHTML = `
         </div>
       </div>
 
-      <div class='connection-status'>
+      <div class='footer'>
         <div class='icon'></div>
-        <span class='text'>Pending...</div>
+        <div class='text'>Pending...</div>
+
+        <div class='reload-config' tooltip='Reload Config File'>
+          <i class="fas fa-sync-alt"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -103,7 +115,6 @@ AppContext.socket.on('axis.position', (motor, progress, position) => {
 });
 
 const encodersEl = document.querySelector('.encoders');
-
 AppContext.socket.on('ads.values', (values) => {
   let html = '';
 
@@ -112,6 +123,32 @@ AppContext.socket.on('ads.values', (values) => {
   }
 
   encodersEl.innerHTML = html;
+});
+
+const loadcellEl = document.querySelector('.loadcell .value');
+let loadCell = 0;
+AppContext.socket.on('loadcell.value', (value, units, decimals) => {
+  loadcellEl.innerHTML = `${value.toFixed(decimals)} ${units}`;
+  loadCell = value.toFixed(decimals);
+});
+
+document.querySelector('.loadcell').addEventListener('click', () => {
+  var dummy = document.createElement("textarea");
+  document.body.appendChild(dummy);
+  dummy.value = loadCell;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+
+  // Update copy icon
+  const svg = document.querySelector('.loadcell svg');
+  svg.setAttribute('data-icon', 'check');
+  svg.setAttribute('data-prefix', 'fas');
+  setTimeout(() => {
+    const svg = document.querySelector('.loadcell svg');
+    svg.setAttribute('data-icon', 'copy');
+    svg.setAttribute('data-prefix', 'far');
+  }, 1500);
 });
 
 durationEl.addEventListener('keypress', setTypingTimeout);
@@ -194,3 +231,7 @@ function generateLog(name) {
   });
   return el;
 }
+
+document.querySelector('.reload-config').addEventListener('click', () => {
+  AppContext.socket.emit('config.reload');
+});

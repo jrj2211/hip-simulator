@@ -6,8 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.prod.js",
-    "clean": "node-gyp clean"
+    "dist": "webpack --config webpack.prod.js",
+    "clean": "node-gyp clean",
+    "build": "node-gyp configure build"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,8 @@
     "moment": "^2.29.1",
     "multer": "^1.4.2",
     "node-addon-api": "^3.1.0",
+    "onoff": "^6.0.3",
+    "pigpio": "^3.3.1",
     "serialport": "^9.0.7",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",

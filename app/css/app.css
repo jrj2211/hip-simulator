@@ -34,7 +34,7 @@ body .expand {
   flex-grow: 1;
 }
 
-body .connection-status {
+body .Footer {
   padding: 15px 0;
   font-size: 1.2em;
   display: flex;
@@ -42,7 +42,7 @@ body .connection-status {
   align-items: center;
 }
 
-body .connection-status .icon {
+body .footer .icon {
   background: var(--blue-5);
   border-radius: 100%;
   width: 14px;
@@ -52,12 +52,25 @@ body .connection-status .icon {
   justify-content: center;
 }
 
-body .connection-status .icon[color=green] {
+body .footer .icon[color=green] {
   background: var(--green-5);
 }
 
-body .connection-status .icon[color=red] {
+body .footer .icon[color=red] {
   background: var(--red-5);
+}
+
+body .footer .text {
+  flex-grow: 1;
+}
+
+body .footer .reload-config:hover {
+  color: dodgerblue;
+  cursor: pointer;
+}
+
+body .footer .reload-config:before {
+  margin-left: 15px;
 }
 
 body .estop {
@@ -111,6 +124,7 @@ body button[name=goToStart]:hover {
   padding: 10px;
 }
 
+body .loadcell,
 body .encoders {
   background: rgba(0, 0, 0, .2);
   border: 1px solid rgba(255, 255, 255, .1);
@@ -121,6 +135,22 @@ body .encoders {
 body .encoders>div {
   flex-grow: 1;
   text-align: center;
+}
+
+body .loadcell {
+  cursor: pointer;
+}
+
+body .loadcell .value {
+  flex-grow: 1;
+}
+
+body .loadcell:hover .copy {
+  color: dodgerblue;
+}
+
+body .loadcell svg[data-icon=check] {
+  color: green;
 }
 
 input[type=text],

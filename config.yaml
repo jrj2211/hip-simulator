@@ -1,7 +1,7 @@
 baudrate: 230400
 cycle_duration: 2200
 ads_gain: 1
-ads_range: 0.82
+ads_range: 1
 axis:
   '0':
     name: Flexion
@@ -31,3 +31,8 @@ axis:
     speed: 100
     accel: 50
     decel: 50
+loadcell:
+  offset: 0
+  scale: 1
+  units: lbs
+  decimals: 2

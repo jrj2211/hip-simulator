@@ -5,12 +5,17 @@ require('app-module-path').addPath(__dirname);
 // Parse config file
 const yaml = require('js-yaml');
 const Conf = require('conf');
-process.config = new Conf({
-  cwd: process.cwd(),
-  fileExtension: 'yaml',
-	serialize: yaml.dump,
-	deserialize: yaml.load,
-});
+
+function loadConfig() {
+  process.config = new Conf({
+    cwd: process.cwd(),
+    fileExtension: 'yaml',
+  	serialize: yaml.dump,
+  	deserialize: yaml.load,
+  });
+}
+
+loadConfig();
 
 const path = require('path');
 const fs = require('fs');
@@ -20,6 +25,7 @@ const Simulation = require('classes/Simulation.js');
 const AnalogToDigital = require('classes/AnalogToDigital.js');
 const EventLoop = require('classes/EventLoop.js');
 const Logger = require('classes/Logger.js');
+const HX711 = require('classes/HX711');
 
 const eventLoop = new EventLoop();
 eventLoop.start();
@@ -105,11 +111,11 @@ function main() {
 
     const stream = logger.getFileStream(req.params.name);
     stream.pipe(res);
-  })
+  });
 
   app.get('*', (req, res) => {
     res.render('index.html');
-  })
+  });
 
   http.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
@@ -135,6 +141,10 @@ function main() {
 
   const logger = new Logger('logs');
 
+  const loadCell = new HX711(6, 5, {
+    scale: process.config.get('loadcell.scale'),
+    offset: process.config.get('loadcell.offset'),
+  });
 
   /*****************************************************************************
    * Websocket Communication to GUI
@@ -144,6 +154,7 @@ function main() {
 
     socket.join('frame');
     socket.join('ads');
+    socket.join('loadcell');
     socket.join('logs');
 
     socket.on('profiles.list', async (motor, callback) => {
@@ -215,6 +226,13 @@ function main() {
       }
     });
 
+    socket.on('config.reload', () => {
+      console.log('Reloading config...');
+      loadConfig();
+      loadCell.scale = process.config.get('loadcell.scale');
+      loadCell.offset = process.config.get('loadcell.offset');
+    });
+
   });
 
   /*****************************************************************************
@@ -251,24 +269,37 @@ function main() {
 
   // Setup the logger
   logger.setHeaders([
+    'DT',
     'A1',
     'A2',
     'A3',
     'A3',
-    'Load'
+    'LD',
   ]);
 
   // On new encoder values
-  ads.on('update', (values) => {
+  ads.on('update', async (values) => {
+    const load = await loadCell.read();
+
     io.to("ads").emit('ads.values', values);
+    io.to("loadcell").emit('loadcell.value',
+      load,
+      process.config.get('loadcell.units'), 
+      process.config.get('loadcell.decimals')
+    );
+
     if(simulation.running) {
       logger.add([
+        0,
         values[1],
         values[2],
         values[3],
         values[4],
-        null
+        load,
       ]);
     }
   });
+
+
+
 }
