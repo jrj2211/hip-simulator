@@ -263,12 +263,12 @@ function main() {
 
   // Setup the logger
   logger.setHeaders([
-    'DT',
+    'MS',
     'A1',
     'A2',
     'A3',
-    'A3',
-    'LD',
+    'A4',
+    'LOAD',
   ]);
 
   // On new encoder values
@@ -284,11 +284,11 @@ function main() {
 
     if(simulation.running) {
       logger.add([
-        0,
-        values[1],
-        values[2],
-        values[3],
-        values[4],
+        simulation.elapsed,
+        values[0] * 100,
+        values[1] * 100,
+        values[2] * 100,
+        values[3] * 100,
         load,
       ]);
     }

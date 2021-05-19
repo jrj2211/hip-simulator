@@ -25,6 +25,7 @@ class AnalogToDigital extends EventEmitter {
       this.values[0] = await this.ads1115.measure('0+GND') / this.range;
       this.values[1] = await this.ads1115.measure('1+GND') / this.range;
       this.values[2] = await this.ads1115.measure('2+GND') / this.range;
+      this.values[3] = await this.ads1115.measure('3+GND') / this.range;
 
       if(this.initalized !== true) {
         if(this.numSamples > this.samples.length) {
