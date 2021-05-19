@@ -29,7 +29,7 @@ class Logger extends EventEmitter {
 
   async save() {
     // Create the log folder if it doesnt exist
-    fs.mkdirSync(this.path, { recursive: true })
+    await fs.promises.mkdir(this.path, { recursive: true });
 
     // Write the file
     const filename = moment().format('M-D-YYYY h-mm-ss a Z') + '.csv';
@@ -59,9 +59,8 @@ class Logger extends EventEmitter {
     return await fs.promises.unlink(path.join(this.path, name));
   }
 
-  getFileStream(name) {
-    // Get a read stream for log file by name
-    return fs.createReadStream(path.join(this.path, name));
+  getLogPath(name) {
+    return path.join(this.path, name);
   }
 }
 

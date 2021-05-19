@@ -33,6 +33,10 @@ class Simulation extends EventEmitter {
     const params = axes[motor];
     params.scale_factor = params.gear_ratio * params.cpr * 4;
 
+    fs.mkdir(path.join(this.profilesPath, motor.toString()), { recursive: true }, () => {
+      console.log(`Initalized directory for motor ${motor} profiles`);
+    });
+
     this.profiles[motor] = {
       file: null,
       curve: new Curve(),

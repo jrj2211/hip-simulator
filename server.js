@@ -106,11 +106,7 @@ function main() {
   });
 
   app.get('/api/logs/:name', (req, res) => {
-    res.set('Content-disposition', 'attachment; filename=' + req.params.name);
-    res.set('Content-Type', 'text/plain');
-
-    const stream = logger.getFileStream(req.params.name);
-    stream.pipe(res);
+    res.download(logger.getLogPath(req.params.name));
   });
 
   app.get('*', (req, res) => {

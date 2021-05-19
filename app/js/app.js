@@ -227,7 +227,7 @@ function generateLog(name) {
     })
   });
   el.querySelector('[action=download]').addEventListener('click', () => {
-    window.location=`/api/logs/${name}`;
+    window.open(`/api/logs/${name}`, '_blank');
   });
   return el;
 }

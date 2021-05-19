@@ -9,11 +9,4 @@ module.exports = merge(common, {
     filename: '[name].[fullhash].js',
   },
   devtool: 'source-map',
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
-      }
-    })
-  ],
 });
