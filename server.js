@@ -25,7 +25,7 @@ const Simulation = require('classes/Simulation.js');
 const AnalogToDigital = require('classes/AnalogToDigital.js');
 const EventLoop = require('classes/EventLoop.js');
 const Logger = require('classes/Logger.js');
-const HX711 = require('classes/HX711');
+const HX711 = require('pi-hx711');
 
 const eventLoop = new EventLoop();
 eventLoop.start();
@@ -158,14 +158,8 @@ function main() {
     socket.join('logs');
 
     socket.on('profiles.list', async (motor, callback) => {
-      const dirPath = path.join(__dirname, 'profiles', motor.toString());
-
-      try {
-        const files = await fs.promises.readdir(dirPath);
-        callback(files);
-      } catch(error) {
-        callback({error});
-      }
+      const profiles = await simulation.getProfilesList(motor);
+      callback(profiles);
     });
 
     socket.on('cycle-duration.get', (callback) => {
@@ -284,7 +278,7 @@ function main() {
     io.to("ads").emit('ads.values', values);
     io.to("loadcell").emit('loadcell.value',
       load,
-      process.config.get('loadcell.units'), 
+      process.config.get('loadcell.units'),
       process.config.get('loadcell.decimals')
     );
 
@@ -299,7 +293,5 @@ function main() {
       ]);
     }
   });
-
-
 
 }

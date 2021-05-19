@@ -9,7 +9,7 @@ const eventLoop = require('classes/EventLoop.js');
 class Simulation extends EventEmitter {
   constructor(rc, io, loop) {
     super();
-    
+
     this.data = {
       duration: parseInt(process.config.get('cycle_duration'))
     };
@@ -19,6 +19,8 @@ class Simulation extends EventEmitter {
     this.rc = rc;
     this.io = io;
     this.loop = loop;
+
+    this.profilesPath = path.join(process.cwd(), 'profiles');
 
     this.addAxis(0);
     this.addAxis(1);
@@ -108,6 +110,16 @@ class Simulation extends EventEmitter {
     return this.profiles[motor].file;
   }
 
+  async getProfilesList(motor) {
+    const dirPath = path.join(this.profilesPath, motor.toString());
+    try {
+      return await fs.promises.readdir(dirPath);
+    } catch(error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   async setProfile(motor, file) {
     const profile = this.profiles[motor];
 
@@ -122,7 +134,7 @@ class Simulation extends EventEmitter {
   async deleteProfile(motor, file) {
     const profile = this.profiles[motor];
 
-    const filePath = path.join(process.cwd(), 'profiles', motor.toString(), file);
+    const filePath = path.join(this.profilesPath, motor.toString(), file);
     await fs.promises.unlink(filePath);
 
     if(profile.file == file) {
@@ -135,7 +147,7 @@ class Simulation extends EventEmitter {
     const profile = this.profiles[motor];
 
     if(profile.file) {
-      const filePath = path.join(process.cwd(), 'profiles', motor.toString(), profile.file);
+      const filePath = path.join(this.profilesPath, motor.toString(), profile.file);
       try {
         let file = await fs.promises.readFile(filePath, 'utf8');
         if(file) {
