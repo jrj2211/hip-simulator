@@ -17,20 +17,24 @@
 4. Install pigio:
 
    `sudo apt-get install pigpio`
+
+5. Enable I2C in the interface section of raspi config:
+
+   `sudo raspi-config`
    
-5. Change to the hip simulator directory:
+6. Change to the hip simulator directory:
 
    `cd hip-simulator`
    
-6. Run the command to install node dependencies:
+7. Run the command to install node dependencies:
 
    `npm install`
    
-7. Start the node server:
+8. Start the node server:
 
     `npm start`
     
-8. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
+9. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
 
 ### Service
 
@@ -79,3 +83,31 @@ To calibrate the load cell:
 
    `1 / (value / weight) = scale`
 6. Choose number of decimal places to show in config.yaml
+
+
+## Wiring Documentation
+
+![image](https://user-images.githubusercontent.com/6005836/118934807-9facb800-b8ff-11eb-8480-3f085804fcc0.png)
+
+
+1. Roboclaw Wiring
+
+In packet serial mode up to eight Roboclaw units can be controlled from a single serial port.
+The wiring diagram below illustrates how this is done. Each Roboclaw must have multi-unit
+mode enabled and have a unique packet serial address set. This can be configured using Motion
+Studio. Wire the S1 and S2 pins directly to the MCU TX and RX pins. Install a pull-up resistor
+(R1) on the MCU RX pin. A 1K to 4.7K resistor value is recommended. For model specific pinout
+information please refer to the data sheet for the model being used.
+
+![image](https://user-images.githubusercontent.com/6005836/118936032-02eb1a00-b901-11eb-8f52-f4ff420b87d3.png)
+
+![image](https://user-images.githubusercontent.com/6005836/118934712-81df5300-b8ff-11eb-8e24-ee594ea3f68a.png)
+
+2. ADS115 Wiring
+
+![image](https://user-images.githubusercontent.com/6005836/118934851-ae936a80-b8ff-11eb-82e4-4a669a4d3876.png)
+
+3. HX711 Wiring
+
+![image](https://user-images.githubusercontent.com/6005836/118934891-bb17c300-b8ff-11eb-8c3f-f2cf5466de03.png)
+
