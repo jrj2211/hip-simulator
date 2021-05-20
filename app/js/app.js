@@ -111,11 +111,11 @@ AppContext.socket.on('axis.position', (motor, progress, position) => {
 });
 
 const encodersEl = document.querySelector('.encoders');
-AppContext.socket.on('ads.values', (values) => {
+AppContext.socket.on('ads.values', (values, units) => {
   let html = '';
 
-  for(let value of values) {
-    html += `<div>${(value * 100).toFixed(1)}%</div>`;
+  for(let i in values) {
+    html += `<div>${(values[i] * 100).toFixed(1)}${units[i]}</div>`;
   }
 
   encodersEl.innerHTML = html;

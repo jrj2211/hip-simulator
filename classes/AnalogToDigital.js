@@ -8,13 +8,11 @@ class AnalogToDigital extends EventEmitter {
 
     i2c.openPromisified(1).then(async (bus) => {
       this.ads1115 = await ADS1115(bus);
-      this.ads1115.gain = process.config.get('ads_gain');
+      this.ads1115.gain = process.config.get('ads.gain');
       this.connected = true;
     });
 
     this.values = [0,0,0,0];
-
-    this.range = (process.config.get('ads_range') * 32768);
 
     this.numSamples = 10;
     this.samples = [];
@@ -22,10 +20,10 @@ class AnalogToDigital extends EventEmitter {
 
   async update() {
     if(this.connected) {
-      this.values[0] = await this.ads1115.measure('0+GND') / this.range;
-      this.values[1] = await this.ads1115.measure('1+GND') / this.range;
-      this.values[2] = await this.ads1115.measure('2+GND') / this.range;
-      this.values[3] = await this.ads1115.measure('3+GND') / this.range;
+      this.values[0] = await this.ads1115.measure('0+GND') / process.config.get('ads.A0.scale');
+      this.values[1] = await this.ads1115.measure('1+GND') / process.config.get('ads.A1.scale');
+      this.values[2] = await this.ads1115.measure('2+GND') / process.config.get('ads.A2.scale');
+      this.values[3] = await this.ads1115.measure('3+GND') / process.config.get('ads.A3.scale');
 
       if(this.initalized !== true) {
         if(this.numSamples > this.samples.length) {

@@ -256,7 +256,7 @@ function main() {
     'A1',
     'A2',
     'A3',
-    'A4',
+    'VOLT',
     'LOAD',
   ]);
 
@@ -264,7 +264,13 @@ function main() {
   ads.on('update', async (values) => {
     const load = await loadCell.read();
 
-    io.to("ads").emit('ads.values', values);
+    io.to("ads").emit('ads.values', values, [
+      process.config.get('ads.A0.units'),
+      process.config.get('ads.A1.units'),
+      process.config.get('ads.A2.units'),
+      process.config.get('ads.A3.units'),
+    ]);
+
     io.to("loadcell").emit('loadcell.value',
       load,
       process.config.get('loadcell.units'),
@@ -274,10 +280,10 @@ function main() {
     if(simulation.running) {
       logger.add([
         simulation.elapsed,
-        values[0] * 100,
-        values[1] * 100,
-        values[2] * 100,
-        values[3] * 100,
+        values[0],
+        values[1],
+        values[2],
+        values[3],
         load,
       ]);
     }

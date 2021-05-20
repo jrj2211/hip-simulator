@@ -1,7 +1,19 @@
 baudrate: 230400
-cycle_duration: 2200
-ads_gain: 1
-ads_range: 1
+cycle_duration: 1000
+ads:
+  gain: 1
+  A0:
+    scale: 26208
+    units: '%'
+  A1:
+    scale: 26208
+    units: '%'
+  A2:
+    scale: 26208
+    units: '%'
+  A3:
+    scale: 26208
+    units: 'V'
 axis:
   '0':
     name: Flexion
