@@ -66,7 +66,8 @@ class Simulation extends EventEmitter {
   }
 
   goToStart() {
-    this.stop();
+    this.elapsed = 0;
+    this.running = false;
     this.update();
   }
 
