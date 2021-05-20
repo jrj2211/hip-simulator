@@ -6,33 +6,44 @@
 ## Setup Instructions
 
 1. Connect you your raspberry PI via SSH over Putty.
-2. Run the following commands:
 
-   `apt-get install git`
+2. Install NodeJS:
+
+   ```'
+   curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+   sudo apt install nodejs
+   ```
    
-3. Checkout the hip simulator repository:
+3. Run the following commands:
+
+   ```
+   sudo apt-get update
+   sudo apt-get install git
+   ```
+   
+4. Checkout the hip simulator repository:
 
    `git clone https://github.com/jrj2211/hip-simulator`
    
-4. Install pigio:
+5. Install pigio:
 
    `sudo apt-get install pigpio`
 
-5. Enable I2C in the interface section of raspi config:
+6. Enable I2C in the interface section of raspi config:
 
    `sudo raspi-config`
    
-6. Change to the hip simulator directory:
+7. Change to the hip simulator directory:
 
    `cd hip-simulator`
    
-7. Run the command to install node dependencies:
+8. Run the command to install node dependencies:
 
    `npm install`
    
 8. Start the node server:
 
-    `npm start`
+    `sudo npm start`
     
 9. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
 
