@@ -115,7 +115,7 @@ AppContext.socket.on('ads.values', (values, units) => {
   let html = '';
 
   for(let i in values) {
-    html += `<div>${(values[i] * 100).toFixed(1)}${units[i]}</div>`;
+    html += `<div>${(values[i]).toFixed(1)}${units[i]}</div>`;
   }
 
   encodersEl.innerHTML = html;
