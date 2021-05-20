@@ -103,7 +103,7 @@ information please refer to the data sheet for the model being used.
 
 ![image](https://user-images.githubusercontent.com/6005836/118936958-e1d6f900-b901-11eb-8e7e-3194bf1c61b1.png)
 
-![image](https://user-images.githubusercontent.com/6005836/118934712-81df5300-b8ff-11eb-8e24-ee594ea3f68a.png)
+![image](https://user-images.githubusercontent.com/6005836/118938323-5d857580-b903-11eb-8089-034543a6cef4.png)
 
 2. ADS115 Wiring
 
