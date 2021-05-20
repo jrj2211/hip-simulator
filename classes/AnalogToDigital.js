@@ -20,10 +20,10 @@ class AnalogToDigital extends EventEmitter {
 
   async update() {
     if(this.connected) {
-      this.values[0] = await this.ads1115.measure('0+GND') / process.config.get('ads.A0.scale');
-      this.values[1] = await this.ads1115.measure('1+GND') / process.config.get('ads.A1.scale');
-      this.values[2] = await this.ads1115.measure('2+GND') / process.config.get('ads.A2.scale');
-      this.values[3] = await this.ads1115.measure('3+GND') / process.config.get('ads.A3.scale');
+      this.values[0] = await this.ads1115.measure('0+GND') / process.config.get('ads.A0.max');
+      this.values[1] = await this.ads1115.measure('1+GND') / process.config.get('ads.A1.max');
+      this.values[2] = await this.ads1115.measure('2+GND') / process.config.get('ads.A2.max');
+      this.values[3] = await this.ads1115.measure('3+GND') / process.config.get('ads.A3.max');
 
       if(this.initalized !== true) {
         if(this.numSamples > this.samples.length) {

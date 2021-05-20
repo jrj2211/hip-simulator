@@ -3,16 +3,16 @@ cycle_duration: 1000
 ads:
   gain: 1
   A0:
-    scale: 26208
+    max: 26208
     units: '%'
   A1:
-    scale: 26208
+    max: 26208
     units: '%'
   A2:
-    scale: 26208
+    max: 26208
     units: '%'
   A3:
-    scale: 26208
+    max: 26208
     units: 'V'
 axis:
   '0':
