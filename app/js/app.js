@@ -75,10 +75,6 @@ document.body.innerHTML = `
       <div class='footer'>
         <div class='icon'></div>
         <div class='text'>Pending...</div>
-
-        <div class='reload-config' tooltip='Reload Config File'>
-          <i class="fas fa-sync-alt"></i>
-        </div>
       </div>
     </div>
   </div>
@@ -231,7 +227,3 @@ function generateLog(name) {
   });
   return el;
 }
-
-document.querySelector('.reload-config').addEventListener('click', () => {
-  AppContext.socket.emit('config.reload');
-});

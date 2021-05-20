@@ -138,8 +138,8 @@ function main() {
   const logger = new Logger('logs');
 
   const loadCell = new HX711(6, 5, {
-    scale: process.config.get('loadcell.scale'),
-    offset: process.config.get('loadcell.offset'),
+    scale: () => process.config.get('loadcell.scale'),
+    offset: () => process.config.get('loadcell.offset'),
   });
 
   /*****************************************************************************
@@ -214,13 +214,6 @@ function main() {
       } catch(error) {
         callback({error});
       }
-    });
-
-    socket.on('config.reload', () => {
-      console.log('Reloading config...');
-      loadConfig();
-      loadCell.scale = process.config.get('loadcell.scale');
-      loadCell.offset = process.config.get('loadcell.offset');
     });
 
   });
