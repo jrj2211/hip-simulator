@@ -23,27 +23,39 @@
    
 4. Checkout the hip simulator repository:
 
-   `git clone https://github.com/jrj2211/hip-simulator`
+   ```
+   git clone https://github.com/jrj2211/hip-simulator
+   ```
    
 5. Install pigio:
 
-   `sudo apt-get install pigpio`
+   ```
+   sudo apt-get install pigpio
+   ```
 
 6. Enable I2C in the interface section of raspi config:
 
-   `sudo raspi-config`
+   ```
+   sudo raspi-config
+   ```
    
 7. Change to the hip simulator directory:
 
-   `cd hip-simulator`
+   ```
+   cd hip-simulator
+   ```
    
 8. Run the command to install node dependencies:
 
-   `npm install`
+   ```
+   npm install
+   ```
    
 8. Start the node server:
 
-    `sudo npm start`
+    ```
+    sudo npm start
+    ```
     
 9. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
 
@@ -51,34 +63,34 @@
 
 To make the system start on boot, create a service file: 
 
-```
-sudo nano /etc/systemd/system/hipsimulator.service
-```
+   ```
+   sudo nano /etc/systemd/system/hipsimulator.service
+   ```
 
 Paste the following:
 
-```
-[Unit]
-Description=Hip simulator controller
-After=network.target
+   ```
+   [Unit]
+   Description=Hip simulator controller
+   After=network.target
 
-[Service]
-Type=simple
-WorkingDirectory=/home/pi/hip-simulator
-ExecStart=/usr/bin/node /home/pi/hip-simulator/server.js
+   [Service]
+   Type=simple
+   WorkingDirectory=/home/pi/hip-simulator
+   ExecStart=/usr/bin/node /home/pi/hip-simulator/server.js
 
-Environment=NODE_ENV=production
-Restart=on-failure
+   Environment=NODE_ENV=production
+   Restart=on-failure
 
-[Install]
-WantedBy=multi-user.target
-```
+   [Install]
+   WantedBy=multi-user.target
+   ```
 
-Enable the service and start it
-```
-sudo systemctl enable hipsimulator
-sudo systemctl start hipsimulator
-```
+   Enable the service and start it
+   ```
+   sudo systemctl enable hipsimulator
+   sudo systemctl start hipsimulator
+   ```
 
 ### Calibration
 
