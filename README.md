@@ -51,6 +51,12 @@
    npm install
    ```
    
+8. Compile the frontend GUI code:
+
+    ```
+    sudo npm run dist
+    ```
+   
 8. Start the node server:
 
     ```
@@ -86,11 +92,23 @@ Paste the following:
    WantedBy=multi-user.target
    ```
 
-   Enable the service and start it
+Enable the service and start it
+
    ```
    sudo systemctl enable hipsimulator
    sudo systemctl start hipsimulator
    ```
+   
+### Updating
+
+To update the code, run the following git command:
+
+```
+cd  ~/hip-simulator
+git pull origin main
+npm run dist
+sudo systemctl restart hipsimulator
+```
 
 ### Calibration
 
