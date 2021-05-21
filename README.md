@@ -155,7 +155,7 @@ information please refer to the data sheet for the model being used.
 
 ![image](https://user-images.githubusercontent.com/6005836/118936958-e1d6f900-b901-11eb-8e7e-3194bf1c61b1.png)
 
-![image](https://user-images.githubusercontent.com/6005836/118938323-5d857580-b903-11eb-8089-034543a6cef4.png)
+![image](https://user-images.githubusercontent.com/6005836/119077724-b27bc700-b9a9-11eb-8301-3132d01f32ec.png)
 
 2. ADS115 Wiring
 
