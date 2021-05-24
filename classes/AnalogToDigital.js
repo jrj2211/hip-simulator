@@ -16,14 +16,18 @@ class AnalogToDigital extends EventEmitter {
 
     this.numSamples = 10;
     this.samples = [];
+    this.active = false;
   }
 
   async update() {
-    if(this.connected) {
-      this.values[0] = (await this.ads1115.measure('0+GND') / process.config.get('ads.A0.max')) * 100;
-      this.values[1] = (await this.ads1115.measure('1+GND') / process.config.get('ads.A1.max')) * 100;
-      this.values[2] = (await this.ads1115.measure('2+GND') / process.config.get('ads.A2.max')) * 100;
-      this.values[3] = (await this.ads1115.measure('3+GND') / process.config.get('ads.A3.max')) * 100;
+    if(this.connected && this.active) {
+      // Get each motor channel and scale -100% to 100%
+      this.values[0] = (await this.ads1115.measure('0+GND') / process.config.get('ads.A0.max')) * 200 - 100;
+      this.values[1] = (await this.ads1115.measure('1+GND') / process.config.get('ads.A1.max')) * 200 - 100;
+      this.values[2] = (await this.ads1115.measure('2+GND') / process.config.get('ads.A2.max')) * 200 - 100;
+
+      // Get load cell
+      this.values[3] = (await this.ads1115.measure('3+GND') / process.config.get('ads.A3.max')) * process.config.get('ads.A3.max_voltage');
 
       if(this.initalized !== true) {
         if(this.numSamples > this.samples.length) {

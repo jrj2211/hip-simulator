@@ -224,13 +224,25 @@ function main() {
   const ads = new AnalogToDigital();
 
   // Update the motor encoder based on ads value at boot
-  ads.once('averages', (values) => {
-    for(let motor in values) {
+  ads.once('averages', async (values) => {
+    // Calibrate motors based on analog encoder
+    const adsMotors = [0,1,2];
+
+    for(let motor in adsMotors) {
       const params = simulation.getMotorParams(motor);
       let position = values[motor] * params.scale_factor;
       rc.setEncValue(motor, position);
       console.log(`Motor ${motor} Home: ${position} (${values[motor]}%)`);
     }
+
+    // Calibrate load axis
+    const load = await loadCell.read();
+    rc.setEncValue(3, load * process.config.get('axis.3.conversion'));
+    console.log(load * process.config.get('axis.3.conversion'));
+  });
+
+  simulation.backlashStartup(() => {
+    ads.active = true;
   });
 
   /*****************************************************************************

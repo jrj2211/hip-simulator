@@ -41,6 +41,7 @@ class Simulation extends EventEmitter {
       file: null,
       curve: new Curve(),
       params,
+      compensation: 0,
     }
   }
 
@@ -88,23 +89,53 @@ class Simulation extends EventEmitter {
 
     for(let motor in this.profiles) {
       const profile = this.profiles[motor];
-      const motorPos = profile.curve.update(progress);
+      let motorPos = profile.curve.update(progress);
 
       if(motorPos !== undefined && Number.isNaN(motorPos) === false) {
         this.io.to("frame").emit('axis.position', motor, progress, motorPos);
         const params = this.getMotorParams(motor);
 
+        motorPos *= params.scale_factor;
+
+        if(params.conversion) {
+          motorPos *= params.conversion;
+        }
+
+        if(Number.isFinite(profile.position)) {
+          profile.direction = motorPos - profile.position > 1 ? 0 : -1;
+          profile.compensation = params.backlash * profile.direction;
+        }
+
         this.rc.goToPosition(
           motor,
-          motorPos * params.scale_factor,
+          motorPos + (profile.compensation || 0),
           (params.speed / params.cpr) * params.scale_factor,
           (params.accel / params.cpr) * params.scale_factor,
           (params.decel / params.cpr) * params.scale_factor,
         );
+
+        profile.position = motorPos;
       }
     }
 
     this.elapsed += deltaTime;
+  }
+
+  backlashStartup(cb) {
+    // Move each motor forward its backlash compensation
+    for(let motor in this.profiles) {
+      const params = this.getMotorParams(motor);
+
+      this.rc.goToPosition(
+        motor,
+        params.backlash,
+        (params.speed / params.cpr) * params.scale_factor * .5,
+        (params.accel / params.cpr) * params.scale_factor * .5,
+        (params.decel / params.cpr) * params.scale_factor * .5,
+      );
+    }
+
+    setTimeout(cb, 500);
   }
 
   getMotorParams(motor) {

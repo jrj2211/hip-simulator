@@ -14,6 +14,7 @@ ads:
   A3:
     max: 26385
     units: 'V'
+    max_voltage: 125
 axis:
   '0':
     name: Flexion
@@ -22,6 +23,7 @@ axis:
     speed: 360
     accel: 360
     decel: 360
+    backlash: 300
   '1':
     name: Abduction
     cpr: 100
@@ -29,6 +31,7 @@ axis:
     speed: 100
     accel: 50
     decel: 50
+    backlash: 0
   '2':
     name: Rotation
     cpr: 100
@@ -36,6 +39,7 @@ axis:
     speed: 100
     accel: 50
     decel: 50
+    backlash: 0
   '3':
     name: Load
     cpr: 100
@@ -43,8 +47,10 @@ axis:
     speed: 100
     accel: 50
     decel: 50
+    backlash: 0
+    conversion: 2.44
 loadcell:
   offset: 0
   scale: 1
-  units: lbs
+  units: KN
   decimals: 2
