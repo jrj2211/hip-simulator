@@ -112,19 +112,30 @@ sudo systemctl restart hipsimulator
 
 ### Calibration
 
-To calibrate the rotary encoders, go to the web GUI. The values for each encoder is updated in real time so you can rotate them until they all read 0% at your home position.
 
-To calibrate the load cell:
+- Rotaty Encoders
 
-1. Remove all weight from the load cell
-2. Copy the value from the GUI into loadcell.offset in the config.yaml
-3. Place a known amount of weight on the load cell
-4. Copy the value from the GUI
-5. Using that value calculate the scale to convert to pounds
+  To calibrate the rotary encoders, go to the web GUI. The values for each encoder is updated in real time so you can rotate them until they all read 0% at your home position.
+  
+  You also need to calibrate the max value of the encoder:
+  
+  1. Set the max in the config to 1
+  2. Spin the encoder to the largest value you can get
+  3. Copy that number as the max in the config
 
-   `1 / (value / weight) = scale`
-6. Choose number of decimal places to show in config.yaml
+- Load Cell
 
+  To calibrate the load cell:
+
+   1. Remove all weight from the load cell
+   2. Copy the value from the GUI into loadcell.offset in the config.yaml
+   3. Place a known amount of weight on the load cell
+   4. Copy the value from the GUI
+   5. Using that value calculate the scale to convert to pounds
+
+      `1 / (value / weight) = scale`
+      
+   6. Choose number of decimal places to show in config.yaml
 
 ## Wiring Documentation
 
@@ -144,7 +155,7 @@ information please refer to the data sheet for the model being used.
 
 ![image](https://user-images.githubusercontent.com/6005836/118936958-e1d6f900-b901-11eb-8e7e-3194bf1c61b1.png)
 
-![image](https://user-images.githubusercontent.com/6005836/118938323-5d857580-b903-11eb-8089-034543a6cef4.png)
+![image](https://user-images.githubusercontent.com/6005836/119077724-b27bc700-b9a9-11eb-8301-3132d01f32ec.png)
 
 2. ADS115 Wiring
 
