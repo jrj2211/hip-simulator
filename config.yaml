@@ -1,5 +1,5 @@
 baudrate: 230400
-cycle_duration: 1000
+cycle_duration: 20000
 ads:
   gain: 1
   A0:
@@ -13,13 +13,13 @@ ads:
     units: '%'
   A3:
     max: 26385
-    units: 'V'
-    max_voltage: 125
+    units: V
+    max_voltage: 300
 axis:
   '0':
     name: Flexion
     cpr: 100
-    gear_ratio: 50
+    gear_ratio: 25
     speed: 360
     accel: 360
     decel: 360
@@ -43,14 +43,14 @@ axis:
   '3':
     name: Load
     cpr: 100
-    gear_ratio: 50
+    gear_ratio: 25
     speed: 100
     accel: 50
     decel: 50
     backlash: 0
-    conversion: 2.44
+    conversion: 10.48
 loadcell:
-  offset: 0
-  scale: 1
-  units: KN
+  offset: 8374799
+  scale: 0.000529241
+  units: lb
   decimals: 2

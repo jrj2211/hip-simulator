@@ -73,6 +73,8 @@ class Roboclaw extends serialport {
     packet.setUint8(0, this.getMotorAddress(motor));
     packet.setUint8(1, this.getMotorCommand(motor, cmds));
     packet.setInt32(2, Math.round(value));
+
+    console.log(this.getMotorAddress(motor), this.getMotorCommand(motor, cmds), Math.round(value));
     this.write(packet.bytes);
   }
 

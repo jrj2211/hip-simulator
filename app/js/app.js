@@ -83,8 +83,8 @@ document.body.innerHTML = `
 const container = document.body.querySelector('.container');
 
 const axes = {
-  'abduction': new AxisDisplay(0, 'Abduction', '#47BFF5'),
-  'flexion': new AxisDisplay(1, 'Flexion', '#F54782'),
+  'flexion': new AxisDisplay(0, 'Flexion', '#47BFF5'),
+  'abduction': new AxisDisplay(1, 'Abduction', '#F54782'),
   'rotation': new AxisDisplay(2, 'Rotation', '#5EF547'),
   'load': new AxisDisplay(3, 'Load', '#F58247'),
 };
