@@ -232,19 +232,15 @@ function main() {
       const params = simulation.getMotorParams(motor);
       let position = ((values[motor] / 100) * params.scale_factor) / 2;
       rc.setEncValue(motor, position);
-      console.log(`Motor ${motor} Home: ${position} (${values[motor]}%)`);
+      console.log(`Setting Motor ${motor} Pos: ${position} (${values[motor]}%)`);
     }
 
     // Calibrate load axis
     const load = await loadCell.read();
-	console.log(load);
     rc.setEncValue(3, load * process.config.get('axis.3.conversion'));
-    console.log(load * process.config.get('axis.3.conversion'));
   });
 
-  simulation.backlashStartup(() => {
-    ads.active = true;
-  });
+  ads.active = true;
 
   /*****************************************************************************
    * LOGGING
