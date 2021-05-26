@@ -5,41 +5,57 @@
 
 ## Setup Instructions
 
-1. Connect you your raspberry PI via SSH over Putty.
+1. In Micro Basic Motion Studio set the following settings:
+   
+   Roboclaw 1:
+   ```
+   Control Mode: Packet Serial
+   Packet Serial Address: 128
+   Baudrate: 230400
+   ```
+   
+   Roboclaw 2:
+   ```
+   Control Mode: Packet Serial
+   Packet Serial Address: 129
+   Baudrate: 230400
+   ```
 
-2. Install NodeJS:
+2. Connect you your raspberry PI via SSH over Putty.
+
+3. Install NodeJS:
 
    ```'
    curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
    sudo apt install nodejs
    ```
    
-3. Run the following commands:
+4. Run the following commands:
 
    ```
    sudo apt-get update
    sudo apt-get install git
    ```
    
-4. Checkout the hip simulator repository:
+5. Checkout the hip simulator repository:
 
    ```
    git clone https://github.com/jrj2211/hip-simulator
    ```
    
-5. Install pigio:
+6. Install pigio:
 
    ```
    sudo apt-get install pigpio
    ```
 
-6. Enable I2C in the interface section of raspi config:
+7. Enable I2C in the interface section of raspi config:
 
    ```
    sudo raspi-config
    ```
    
-7. Enable Serial UART Hardware
+8. Enable Serial UART Hardware
 
    ```
    sudo raspi-config
@@ -51,31 +67,31 @@
    > Yes
    ```
    
-8. Change to the hip simulator directory:
+9. Change to the hip simulator directory:
 
    ```
    cd hip-simulator
    ```
    
-9. Run the command to install node dependencies:
+10. Run the command to install node dependencies:
 
    ```
    npm install
    ```
    
-10. Compile the frontend GUI code:
+11. Compile the frontend GUI code:
 
     ```
     sudo npm run dist
     ```
    
-11. Start the node server:
+12. Start the node server:
 
     ```
     sudo npm start
     ```
     
-12. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
+13. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
 
 ### Service
 
