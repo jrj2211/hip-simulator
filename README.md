@@ -39,31 +39,43 @@
    sudo raspi-config
    ```
    
-7. Change to the hip simulator directory:
+7. Enable Serial UART Hardware
+
+   ```
+   sudo raspi-config
+   > 3. Interface Options
+   > P6. Serial Port
+   Would you like a login shell accessible over serial: 
+   > No
+   Would you like the Serial port hardware to be enabled: 
+   > Yes
+   ```
+   
+8. Change to the hip simulator directory:
 
    ```
    cd hip-simulator
    ```
    
-8. Run the command to install node dependencies:
+9. Run the command to install node dependencies:
 
    ```
    npm install
    ```
    
-8. Compile the frontend GUI code:
+10. Compile the frontend GUI code:
 
     ```
     sudo npm run dist
     ```
    
-8. Start the node server:
+11. Start the node server:
 
     ```
     sudo npm start
     ```
     
-9. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
+12. In your web browser, go to your raspberry pi’s IP address. The interface should come up.
 
 ### Service
 
