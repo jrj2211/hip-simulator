@@ -91,6 +91,8 @@ class Simulation extends EventEmitter {
       const profile = this.profiles[motor];
       let motorPos = profile.curve.update(progress);
 
+      profile.rawMotorPos = motorPos;
+
       if(motorPos !== undefined && Number.isNaN(motorPos) === false) {
         this.io.to("frame").emit('axis.position', motor, progress, motorPos);
         const params = this.getMotorParams(motor);

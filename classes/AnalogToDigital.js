@@ -24,7 +24,6 @@ class AnalogToDigital extends EventEmitter {
       // Get each motor channel and scale -100% to 100%
       this.values[0] = (await this.ads1115.measure('0+GND') / process.config.get('ads.A0.max')) * 200 - 100;
       this.values[1] = (await this.ads1115.measure('1+GND') / process.config.get('ads.A1.max')) * 200 - 100;
-      this.values[2] = (await this.ads1115.measure('2+GND') / process.config.get('ads.A2.max')) * 200 - 100;
 
       // Get load cell
       this.values[3] = (await this.ads1115.measure('3+GND') / process.config.get('ads.A3.max')) * process.config.get('ads.A3.max_voltage');

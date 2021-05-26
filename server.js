@@ -284,14 +284,16 @@ function main() {
       load,
       process.config.get('loadcell.units'),
       process.config.get('loadcell.decimals')
-    );
+    )
 
     if(simulation.running) {
+      let rotation = (simulation.profiles[2].rawMotorPos / 180) * 100;
+
       logger.add([
         simulation.elapsed,
         values[0],
         values[1],
-        values[2],
+        rotation,
         values[3],
         load,
       ]);
