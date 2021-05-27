@@ -189,9 +189,10 @@ class Simulation extends EventEmitter {
       try {
         let file = await fs.promises.readFile(filePath, 'utf8');
         if(file) {
-          file = file.replace(/(\r\n|\n|\r)/gm, '');
-          const points = file.split('/\r?\n/');
+          file = file.replace(/(\r)/gm, '');
+          let points = file.split(/\n/);
           points = points.filter((val) => val != '');
+
           for(let i in points) {
             points[i] = parseFloat(points[i]);
           }
