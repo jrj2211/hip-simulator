@@ -27,7 +27,7 @@ const EventLoop = require('classes/EventLoop.js');
 const Logger = require('classes/Logger.js');
 const HX711 = require('pi-hx711');
 
-const eventLoop = new EventLoop();
+const eventLoop = new EventLoop(50);
 eventLoop.start();
 
 const express = require('express');
@@ -237,7 +237,9 @@ function main() {
 
     // Calibrate load axis
     const load = await loadCell.read();
-    rc.setEncValue(3, load * process.config.get('axis.3.conversion'));
+    const position = load * process.config.get('axis.3.conversion');
+    rc.setEncValue(3, position);
+    console.log(`Setting Load Axis Pos: ${position} (${load} ${process.config.get('loadcell.units')})`);
   });
 
   ads.active = true;
@@ -262,9 +264,9 @@ function main() {
   // Setup the logger
   logger.setHeaders([
     'MS',
-    'A1',
-    'A2',
-    'A3',
+    'FLEXION',
+    'ABDUCTION',
+    'ROTATION',
     'VOLT',
     'LOAD',
   ]);
@@ -291,10 +293,10 @@ function main() {
 
       logger.add([
         simulation.elapsed,
-        values[0],
-        values[1],
-        rotation,
-        values[3],
+        (values[0] / 100) * 360,
+        (values[1] / 100) * 360,
+        (rotation / 100) * 360,
+        (values[3] / 100) * 360,
         load,
       ]);
     }

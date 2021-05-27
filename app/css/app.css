@@ -8,6 +8,7 @@ body {
   height: 100%;
   width: 100%;
   color: white;
+  overflow: auto;
 }
 
 body .container {
@@ -253,6 +254,7 @@ input[type=number] {
 .logs {
   position: relative;
   height: 100%;
+  min-height: 100px;
 }
 
 /* width */
