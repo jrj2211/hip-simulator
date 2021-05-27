@@ -92,44 +92,46 @@ class Simulation extends EventEmitter {
   }
 
   update(deltaTime) {
-    const progress = ((this.elapsed % this.data.duration) / this.data.duration);
+    if(this.running || this.atStart) {
+      const progress = ((this.elapsed % this.data.duration) / this.data.duration);
 
-    const positions = {};
+      const positions = {};
 
-    for(let motor in this.profiles) {
-      const profile = this.profiles[motor];
-      let motorPos = profile.curve.update(progress);
+      for(let motor in this.profiles) {
+        const profile = this.profiles[motor];
+        let motorPos = profile.curve.update(progress);
 
-      profile.rawMotorPos = motorPos;
+        profile.rawMotorPos = motorPos;
 
-      if(motorPos !== undefined && Number.isNaN(motorPos) === false) {
-        this.io.to("frame").emit('axis.position', motor, progress, motorPos);
-        const params = this.getMotorParams(motor);
+        if(Number.isNaN(Number(motorPos)) === false) {
+          this.io.to("frame").emit('axis.position', motor, progress, motorPos);
+          const params = this.getMotorParams(motor);
 
-        motorPos *= params.scale_factor;
+          motorPos *= params.scale_factor;
 
-        if(params.conversion) {
-          motorPos *= params.conversion;
+          if(params.conversion) {
+            motorPos *= params.conversion;
+          }
+
+          if(Number.isNaN(Number(profile.position)) === false) {
+            profile.direction = motorPos - profile.position > 1 ? 0 : -1;
+            profile.compensation = params.backlash * profile.direction;
+          }
+
+          this.rc.goToPosition(
+            motor,
+            motorPos + (profile.compensation || 0),
+            (params.speed / params.cpr) * params.scale_factor,
+            (params.accel / params.cpr) * params.scale_factor,
+            (params.decel / params.cpr) * params.scale_factor,
+          );
+
+          profile.position = motorPos;
         }
-
-        if(Number.isNaN(Number(profile.position)) === false) {
-          profile.direction = motorPos - profile.position > 1 ? 0 : -1;
-          profile.compensation = params.backlash * profile.direction;
-        }
-
-        this.rc.goToPosition(
-          motor,
-          motorPos + (profile.compensation || 0),
-          (params.speed / params.cpr) * params.scale_factor,
-          (params.accel / params.cpr) * params.scale_factor,
-          (params.decel / params.cpr) * params.scale_factor,
-        );
-
-        profile.position = motorPos;
       }
-    }
 
-    this.elapsed += deltaTime;
+      this.elapsed += deltaTime;
+    }
   }
 
   getMotorParams(motor) {

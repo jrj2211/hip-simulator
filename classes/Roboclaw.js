@@ -10,11 +10,6 @@ class Roboclaw extends serialport {
     super(port, options);
 
     this.parser = this.pipe(new ByteLength({length: 1}));
-    this.parser.on('data', this.onData.bind(this));
-  }
-
-  onData(bytes) {
-    // Not doing anything with ACK
   }
 
   updateCrc(data) {

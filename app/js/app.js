@@ -48,7 +48,7 @@ document.body.innerHTML = `
   <div class='container '>
     <div class='controls'>
       <button name='estop'>ESTOP</button>
-      <button name='motion'></button>
+      <button name='motion'>LOADING...</button>
       <div>
         <h2>Cycle Duration</h2>
         <div class='input-container' units='ms'>
@@ -178,7 +178,6 @@ let isRunning = 'stop';
 
 motionButton.addEventListener('click', () => {
   const action = motionButton.getAttribute('action');
-  console.log(action);
   if(action === 'goto') {
     AppContext.socket.emit('motion.goToStart');
   } else if(action === 'start') {

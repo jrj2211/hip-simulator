@@ -241,7 +241,7 @@ function main() {
     }
 
     // Calibrate load axis
-    const load = await loadCell.read(5);
+    const load = await loadCell.read();
     const position = load * process.config.get('axis.3.conversion');
     rc.setEncValue(3, position);
     console.log(`Setting Load Axis Pos: ${position} (${load} ${process.config.get('loadcell.units')})`);
