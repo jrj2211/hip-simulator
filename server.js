@@ -140,6 +140,7 @@ function main() {
   const loadCell = new HX711(6, 5, {
     scale: () => process.config.get('loadcell.scale'),
     offset: () => process.config.get('loadcell.offset'),
+    continous: 100,
   });
 
   /*****************************************************************************
@@ -196,8 +197,8 @@ function main() {
       simulation.stop();
     });
 
-    socket.on('motion.running', (callback) => {
-      callback(simulation.running);
+    socket.on('motion.state', (callback) => {
+      callback(simulation.running, simulation.atStart);
     });
 
     socket.on('logs.list', async (callback) => {
@@ -218,6 +219,10 @@ function main() {
 
   });
 
+  simulation.on('state', async (running, atStart) => {
+    io.to('frame').emit('motion.state', running, atStart)
+  });
+
   /*****************************************************************************
    * Analog to Digital
    ****************************************************************************/
@@ -236,7 +241,7 @@ function main() {
     }
 
     // Calibrate load axis
-    const load = await loadCell.read();
+    const load = await loadCell.read(5);
     const position = load * process.config.get('axis.3.conversion');
     rc.setEncValue(3, position);
     console.log(`Setting Load Axis Pos: ${position} (${load} ${process.config.get('loadcell.units')})`);
@@ -273,7 +278,7 @@ function main() {
 
   // On new encoder values
   ads.on('update', async (values) => {
-    const load = await loadCell.read();
+    const load = loadCell.getLast();
 
     io.to("ads").emit('ads.values', values, [
       process.config.get('ads.A0.units'),

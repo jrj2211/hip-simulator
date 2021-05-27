@@ -21,7 +21,18 @@ AppContext.socket.on('connect', () => {
     durationEl.value = duration;
   });
 
-  AppContext.socket.emit('motion.running', setMotionButton);
+  AppContext.socket.emit('motion.state', onState);
+  AppContext.socket.on('motion.state', onState);
+
+  function onState(running, atStart) {
+    if(running) {
+      setMotionButton('stop');
+    } else if(atStart) {
+      setMotionButton('start');
+    } else {
+      setMotionButton('goto');
+    }
+  }
 
   for(let name in axes) {
     axes[name].profileSelected();
@@ -31,15 +42,13 @@ AppContext.socket.on('connect', () => {
 AppContext.socket.on('disconnect', () => {
   document.querySelector('.footer .icon').setAttribute('color', 'red');
   document.querySelector('.footer .text').innerHTML = 'Disconnected';
-
-  setMotionButton(false);
 });
 
 document.body.innerHTML = `
   <div class='container '>
     <div class='controls'>
-      <button name='motion' action='start'>Start</button>
-      <button name='goToStart'>Go To Start</button>
+      <button name='estop'>ESTOP</button>
+      <button name='motion'></button>
       <div>
         <h2>Cycle Duration</h2>
         <div class='input-container' units='ms'>
@@ -165,11 +174,14 @@ function setDuration() {
 }
 
 const motionButton = document.querySelector('button[name=motion]');
-let isRunning = false;
+let isRunning = 'stop';
 
 motionButton.addEventListener('click', () => {
-  setMotionButton(!isRunning);
-  if(isRunning) {
+  const action = motionButton.getAttribute('action');
+  console.log(action);
+  if(action === 'goto') {
+    AppContext.socket.emit('motion.goToStart');
+  } else if(action === 'start') {
     AppContext.socket.emit('motion.start');
   } else {
     AppContext.socket.emit('motion.stop');
@@ -178,19 +190,21 @@ motionButton.addEventListener('click', () => {
 
 function setMotionButton(r) {
   isRunning = r;
-  if(isRunning) {
-    motionButton.innerHTML = 'Stop';
-    motionButton.setAttribute('action', 'stop');
-  } else {
+  if(isRunning === 'goto') {
+    motionButton.innerHTML = 'Go To Start';
+    motionButton.setAttribute('action', 'goto');
+  } else if(isRunning === 'start') {
     motionButton.innerHTML = 'Start';
     motionButton.setAttribute('action', 'start');
+  } else {
+    motionButton.innerHTML = 'Stop';
+    motionButton.setAttribute('action', 'stop');
   }
 }
 
-const goToStartButton = document.querySelector('button[name=goToStart]');
-
-goToStartButton.addEventListener('click', () => {
-  AppContext.socket.emit('motion.goToStart');
+const estop = document.querySelector('button[name=estop]');
+estop.addEventListener('click', () => {
+  AppContext.socket.emit('motion.stop');
 });
 
 const logListEl = document.querySelector('.log-list');
@@ -201,7 +215,6 @@ AppContext.socket.emit('logs.list', (list) => {
 });
 
 AppContext.socket.on('logs.add', (name) => {
-  console.log('here');
   logListEl.append(generateLog(name));
 });
 

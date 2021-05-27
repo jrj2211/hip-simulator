@@ -87,22 +87,35 @@ body .estop:hover {
   cursor: pointer;
 }
 
+body .simulation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
 body button[name=motion] {
   width: 100%;
-  padding: 15px;
+  padding: 10px;
   border: 0;
   border-radius: 0;
   color: white;
-  font-size: 2.5em;
-  font-weight: bold;
+  font-size: 1.75em;
 }
 
-body button[name=motion][action=start] {
+body button[name=motion][action=goto] {
   background: var(--blue-5);
 }
 
-body button[name=motion][action=start]:hover {
+body button[name=motion][action=goto]:hover {
   background: var(--blue-4);
+}
+
+body button[name=motion][action=start] {
+  background: var(--green-5);
+}
+
+body button[name=motion][action=start]:hover {
+  background: var(--green-4);
 }
 
 body button[name=motion][action=stop] {
@@ -113,16 +126,17 @@ body button[name=motion][action=stop]:hover {
   background: var(--red-4);
 }
 
-body button[name=goToStart] {
-  background: rgba(255, 255, 255, .05);
+body button[name=estop] {
+  background: var(--red-5);
   color: white;
+  border-radius: 0;
   padding: 10px;
+  font-size: 2.5em;
+  font-weight: bold;
 }
 
-body button[name=goToStart]:hover {
-  background: rgba(255, 255, 255, .15);
-  color: white;
-  padding: 10px;
+body button[name=estop]:hover {
+  background: var(--red-4);
 }
 
 body .loadcell,

@@ -15,6 +15,7 @@ class Simulation extends EventEmitter {
     };
     this.profiles = {}
     this.running = false;
+    this.atStart = false;
     this.elapsed = 0;
     this.rc = rc;
     this.io = io;
@@ -48,14 +49,17 @@ class Simulation extends EventEmitter {
   start() {
     this.elapsed = 0;
     this.running = true;
+    this.atStart = false;
     this.loop.register(this);
 
+    this.emit('state', this.running, this.atStart);
     this.emit('start');
   }
 
   stop() {
     this.elapsed = 0;
     this.running = false;
+    this.atStart = false;
     this.loop.unregister(this);
 
     for(let motor in this.profiles) {
@@ -63,13 +67,17 @@ class Simulation extends EventEmitter {
       this.rc.forward(motor, 0);
     }
 
+    this.emit('state', this.running, this.atStart);
     this.emit('stop');
   }
 
   goToStart() {
     this.elapsed = 0;
     this.running = false;
+    this.atStart = true;
     this.update();
+    this.emit('state', this.running, this.atStart);
+    this.emit('atStart');
   }
 
   get duration() {
@@ -80,6 +88,7 @@ class Simulation extends EventEmitter {
     console.log('Setting Duration:', duration);
     process.config.set('cycle_duration', parseInt(duration, 10));
     this.data.duration = duration;
+    this.stop();
   }
 
   update(deltaTime) {
@@ -103,7 +112,7 @@ class Simulation extends EventEmitter {
           motorPos *= params.conversion;
         }
 
-        if(Number.isFinite(profile.position)) {
+        if(Number.isNaN(Number(profile.position)) === false) {
           profile.direction = motorPos - profile.position > 1 ? 0 : -1;
           profile.compensation = params.backlash * profile.direction;
         }
@@ -121,23 +130,6 @@ class Simulation extends EventEmitter {
     }
 
     this.elapsed += deltaTime;
-  }
-
-  backlashStartup(cb) {
-    // Move each motor forward its backlash compensation
-    for(let motor in this.profiles) {
-      const params = this.getMotorParams(motor);
-
-      this.rc.goToPosition(
-        motor,
-        params.backlash,
-        (params.speed / params.cpr) * params.scale_factor * .5,
-        (params.accel / params.cpr) * params.scale_factor * .5,
-        (params.decel / params.cpr) * params.scale_factor * .5,
-      );
-    }
-
-    setTimeout(cb, 500);
   }
 
   getMotorParams(motor) {
@@ -165,6 +157,8 @@ class Simulation extends EventEmitter {
       profile.file = file;
       profile.curve.points = await this.getProfilePoints(motor);
     }
+
+    this.stop();
 
     return profile.curve.points;
   }

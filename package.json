@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jrj2211/hip-simulator.git"
+    "url": "https://github.com/jrj2211/hip-simulator"
   },
   "author": "",
   "license": "ISC",
@@ -33,7 +33,7 @@
     "js-yaml": "^4.1.0",
     "moment": "^2.29.1",
     "multer": "^1.4.2",
-    "pi-hx711": "^1.1.1",
+    "pi-hx711": "^1.2.0",
     "pigpio": "^3.3.1",
     "serialport": "^9.0.7",
     "socket.io": "^4.0.1",
