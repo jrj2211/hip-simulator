@@ -1,5 +1,5 @@
 baudrate: 230400
-cycle_duration: 20000
+cycle_duration: 1000
 ads:
   gain: 1
   A0:
@@ -23,32 +23,32 @@ axis:
     speed: 360
     accel: 360
     decel: 360
-    backlash: 300
+    backlash: 0
   '1':
     name: Abduction
     cpr: 100
     gear_ratio: 50
-    speed: 100
-    accel: 50
-    decel: 50
+    speed: 360
+    accel: 360
+    decel: 360
     backlash: 0
   '2':
     name: Rotation
     cpr: 100
     gear_ratio: 50
-    speed: 100
-    accel: 50
-    decel: 50
+    speed: 360
+    accel: 360
+    decel: 360
     backlash: 0
   '3':
     name: Load
     cpr: 100
     gear_ratio: 25
-    speed: 100
-    accel: 50
-    decel: 50
+    speed: 360
+    accel: 360
+    decel: 360
     backlash: 0
-    conversion: 10.48
+    conversion: 21.7
 loadcell:
   offset: 8374799
   scale: 0.000529241
