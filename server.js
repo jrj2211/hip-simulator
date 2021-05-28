@@ -294,14 +294,12 @@ function main() {
     )
 
     if(simulation.running) {
-      let rotation = (simulation.profiles[2].rawMotorPos / 180) * 100;
-
       logger.add([
         simulation.elapsed,
-        (values[0] / 100) * 360,
-        (values[1] / 100) * 360,
-        (rotation / 100) * 360,
-        (values[3] / 100) * 360,
+        (values[0] / 100) * 180,
+        (values[1] / 100) * 180,
+        simulation.profiles[2].rawMotorPos,
+        (values[3] / 100) * 180,
         load,
       ]);
     }
